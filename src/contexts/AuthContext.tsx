@@ -1,9 +1,8 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 // Define user roles
-export type UserRole = 'parent' | 'teacher' | 'admin';
+export type UserRole = 'parent' | 'teacher' | 'admin' | 'driver';
 
 export interface User {
   id: string;
@@ -58,6 +57,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         role = 'teacher';
       } else if (email.includes('admin')) {
         role = 'admin';
+      } else if (email.includes('driver')) {
+        role = 'driver';
       }
       
       const userData: User = {
