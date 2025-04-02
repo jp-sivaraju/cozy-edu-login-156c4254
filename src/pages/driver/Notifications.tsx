@@ -1,427 +1,307 @@
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle, Bell } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import DriverDashboardLayout from '@/components/layouts/DriverDashboardLayout';
-import { useToast } from '@/hooks/use-toast';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
+import { Bell, Check, AlertTriangle, Info, Settings } from 'lucide-react';
 
-// Mock API service for driver notifications
-const fetchDriverNotifications = async () => {
-  // In a real implementation, this would call the GET /api/driver/notifications API
-  await new Promise(resolve => setTimeout(resolve, 800)); // Simulating API delay
+// Mock notifications data - would come from API in production
+const driverNotifications = [
+  {
+    id: "NOTIF001",
+    type: "alert",
+    title: "Route Update",
+    message: "Your route has been updated. Please check the new stops.",
+    time: "2025-04-02T10:00:00Z",
+    read: true
+  },
+  {
+    id: "NOTIF002",
+    type: "warning",
+    title: "Traffic Alert",
+    message: "Heavy traffic reported on Main Street. Consider alternate route.",
+    time: "2025-04-02T09:30:00Z",
+    read: false
+  },
+  {
+    id: "NOTIF003",
+    type: "info",
+    title: "New Student",
+    message: "New student added to your route: Arjun Reddy, Stop #3",
+    time: "2025-04-01T15:20:00Z",
+    read: true
+  },
+  {
+    id: "NOTIF004",
+    type: "alert",
+    title: "Schedule Change",
+    message: "School dismissal time changed to 3:30 PM tomorrow",
+    time: "2025-04-01T14:10:00Z",
+    read: false
+  },
+  {
+    id: "NOTIF005",
+    type: "info",
+    title: "Fuel Reminder",
+    message: "Please refuel the bus today",
+    time: "2025-04-01T08:45:00Z",
+    read: false
+  }
+];
+
+// Notification settings
+const notificationSettings = [
+  { id: "route_updates", label: "Route Updates", enabled: true },
+  { id: "traffic_alerts", label: "Traffic Alerts", enabled: true },
+  { id: "schedule_changes", label: "Schedule Changes", enabled: true },
+  { id: "student_updates", label: "Student Updates", enabled: false },
+  { id: "weather_alerts", label: "Weather Alerts", enabled: true },
+  { id: "maintenance_reminders", label: "Maintenance Reminders", enabled: false }
+];
+
+const DriverNotifications = () => {
+  const [activeTab, setActiveTab] = useState("all");
+  const [notifications, setNotifications] = useState(driverNotifications);
+  const [settings, setSettings] = useState(notificationSettings);
   
-  return [
-    { 
-      notification_id: "NOTIF001", 
-      message: "Route updated: Stop at Whitefield added at 8:15 AM", 
-      created_at: "2025-04-02T08:30:00Z",
-      read: false,
-      type: "route_update"
-    },
-    { 
-      notification_id: "NOTIF002", 
-      message: "Delay notification sent to parents for Route A", 
-      created_at: "2025-04-02T09:15:00Z",
-      read: true,
-      type: "delay"
-    },
-    { 
-      notification_id: "NOTIF003", 
-      message: "School start time changed to 9:30 AM due to weather", 
-      created_at: "2025-04-01T18:00:00Z",
-      read: true,
-      type: "school"
-    },
-    { 
-      notification_id: "NOTIF004", 
-      message: "New student added to your route: Rahul K, Stop: Koramangala", 
-      created_at: "2025-03-30T14:20:00Z",
-      read: true,
-      type: "student"
-    },
-    { 
-      notification_id: "NOTIF005", 
-      message: "Please update your driver profile with current contact information", 
-      created_at: "2025-03-28T11:00:00Z",
-      read: false,
-      type: "profile"
-    }
-  ];
-};
-
-// Mock API service for updating notification settings
-const updateNotificationSettings = async (settings: any) => {
-  // In a real implementation, this would call the POST /api/driver/notifications/settings API
-  await new Promise(resolve => setTimeout(resolve, 500)); // Simulating API delay
-  return { success: true, message: "Notification settings updated successfully" };
-};
-
-// Mock API service for marking notifications as read
-const markNotificationsRead = async (notificationIds: string[]) => {
-  // In a real implementation, this would call the POST /api/driver/notifications/mark_read API
-  await new Promise(resolve => setTimeout(resolve, 500)); // Simulating API delay
-  return { success: true, message: `${notificationIds.length} notifications marked as read` };
-};
-
-const Notifications = () => {
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('all');
-  const [notificationSettings, setNotificationSettings] = useState({
-    routeUpdates: true,
-    studentChanges: true,
-    delayNotifications: true,
-    schoolAnnouncements: true,
-    sound: true,
-    vibration: true
-  });
-  const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
-  
-  const { 
-    data: notifications, 
-    isLoading, 
-    error,
-    refetch 
-  } = useQuery({
-    queryKey: ['driverNotifications'],
-    queryFn: fetchDriverNotifications,
-  });
-
   const getFilteredNotifications = () => {
-    if (!notifications) return [];
-    
-    switch (activeTab) {
-      case 'unread':
-        return notifications.filter(notif => !notif.read);
-      case 'route':
-        return notifications.filter(notif => ['route_update', 'delay'].includes(notif.type));
-      case 'school':
-        return notifications.filter(notif => ['school', 'profile'].includes(notif.type));
+    if (activeTab === "unread") {
+      return notifications.filter(notif => !notif.read);
+    }
+    return notifications;
+  };
+  
+  const markAsRead = (id: string) => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notif => 
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    );
+  };
+  
+  const markAllAsRead = () => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notif => ({ ...notif, read: true }))
+    );
+  };
+  
+  const toggleSetting = (id: string) => {
+    setSettings(prevSettings => 
+      prevSettings.map(setting => 
+        setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
+      )
+    );
+  };
+  
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'alert':
+        return <Bell className="h-5 w-5 text-[#FF9933]" />;
+      case 'warning':
+        return <AlertTriangle className="h-5 w-5 text-[#FF9933]" />;
+      case 'info':
+        return <Info className="h-5 w-5 text-[#138808]" />;
       default:
-        return notifications;
+        return <Bell className="h-5 w-5 text-[#FF9933]" />;
     }
   };
-
-  const handleSettingChange = (setting: string) => {
-    setNotificationSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting as keyof typeof prev]
-    }));
-  };
-
-  const saveNotificationSettings = async () => {
-    setIsUpdatingSettings(true);
-    try {
-      const result = await updateNotificationSettings(notificationSettings);
-      toast({
-        title: "Settings Updated",
-        description: result.message,
-      });
-    } catch (error) {
-      toast({
-        title: "Update Failed",
-        description: "Failed to update notification settings.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUpdatingSettings(false);
-    }
-  };
-
-  const handleMarkAllRead = async () => {
-    const unreadNotifications = notifications?.filter(n => !n.read) || [];
-    if (unreadNotifications.length === 0) {
-      toast({
-        title: "No unread notifications",
-        description: "All notifications are already marked as read.",
-      });
-      return;
-    }
-    
-    try {
-      const notificationIds = unreadNotifications.map(n => n.notification_id);
-      const result = await markNotificationsRead(notificationIds);
-      toast({
-        title: "Notifications Updated",
-        description: result.message,
-      });
-      refetch();
-    } catch (error) {
-      toast({
-        title: "Update Failed",
-        description: "Failed to mark notifications as read.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Format date helper
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    if (date.toDateString() === today.toDateString()) {
-      return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    } else {
-      return date.toLocaleDateString([], { 
-        day: '2-digit', 
-        month: 'short',
-        year: 'numeric' 
-      }) + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <DriverDashboardLayout>
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-          <div className="flex flex-col space-y-6">
-            <Skeleton className="h-8 w-60 mb-2" />
-            <Skeleton className="h-6 w-80 mb-4" />
-            <div className="space-y-4">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-          </div>
-        </div>
-      </DriverDashboardLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <DriverDashboardLayout>
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-          <Alert variant="destructive">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              Failed to load notifications. Please try again later.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </DriverDashboardLayout>
-    );
-  }
-
-  const filteredNotifications = getFilteredNotifications();
-  const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   return (
-    <DriverDashboardLayout>
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="flex flex-col space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-[#FF9933]">Notifications</h1>
-            <p className="text-[#000080]">Stay updated with important alerts</p>
-          </div>
-
-          {unreadCount > 0 && (
-            <Alert className="border-[#138808] bg-[#F0FFF0]">
-              <Bell className="h-4 w-4 text-[#138808]" />
-              <AlertTitle className="text-[#000080] font-medium">
-                You have {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
-              </AlertTitle>
-              <AlertDescription className="text-slate-600 flex justify-between items-center">
-                <span>Important updates may require your attention.</span>
-                <Button 
-                  variant="outline" 
-                  onClick={handleMarkAllRead}
-                  className="border-[#138808] text-[#138808] hover:bg-[#138808]/5"
-                >
-                  Mark all as read
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-4 mb-6 bg-slate-100 p-1">
+    <DashboardLayout>
+      <div className="container p-6">
+        <h1 className="text-3xl font-bold mb-6 text-[#FF9933]">Driver Notifications</h1>
+        
+        <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-full">
+          <div className="flex justify-between items-center mb-4">
+            <TabsList className="bg-slate-100">
               <TabsTrigger 
-                value="all" 
-                className={`${activeTab === 'all' ? 'bg-[#FF9933] text-white font-medium' : 'text-slate-700'}`}>
+                value="all"
+                className={`${activeTab === "all" ? "bg-[#FF9933] text-white" : ""}`}
+              >
                 All
               </TabsTrigger>
               <TabsTrigger 
                 value="unread"
-                className={`${activeTab === 'unread' ? 'bg-[#FF9933] text-white font-medium' : 'text-slate-700'}`}>
-                Unread
+                className={`${activeTab === "unread" ? "bg-[#FF9933] text-white" : ""}`}
+              >
+                Unread ({notifications.filter(n => !n.read).length})
               </TabsTrigger>
               <TabsTrigger 
-                value="route"
-                className={`${activeTab === 'route' ? 'bg-[#FF9933] text-white font-medium' : 'text-slate-700'}`}>
-                Route
-              </TabsTrigger>
-              <TabsTrigger 
-                value="school"
-                className={`${activeTab === 'school' ? 'bg-[#FF9933] text-white font-medium' : 'text-slate-700'}`}>
-                School
+                value="settings"
+                className={`${activeTab === "settings" ? "bg-[#FF9933] text-white" : ""}`}
+              >
+                <Settings className="h-4 w-4" />
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value={activeTab}>
-              <div className="space-y-6">
-                {/* Notification List */}
-                <Card className="p-6 border-[#138808] border-t-4 shadow-md">
-                  <div className="mb-4">
-                    <h2 className="text-xl font-bold text-[#FF9933]">
-                      <Bell className="inline mr-2 text-[#FF9933]" size={20} />
-                      {activeTab === 'unread' ? 'Unread Notifications' : 
-                       activeTab === 'route' ? 'Route Notifications' :
-                       activeTab === 'school' ? 'School Notifications' : 'All Notifications'}
-                    </h2>
-                  </div>
-
-                  {filteredNotifications.length === 0 ? (
-                    <div className="p-8 text-center text-slate-500">
-                      <Bell className="mx-auto h-12 w-12 text-slate-300 mb-2" />
-                      <p className="text-lg">No notifications found</p>
-                      <p className="text-sm">Check back later for updates</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {filteredNotifications.map((notification) => (
-                        <div 
-                          key={notification.notification_id} 
-                          className={`notification-item ${!notification.read ? 'bg-[#FFF9F0]' : ''}`}
-                        >
-                          <div className="flex justify-between">
-                            <p className={`${!notification.read ? 'font-medium text-[#000080]' : 'text-slate-700'} text-base`}>
-                              {notification.message}
-                            </p>
-                            {!notification.read && (
-                              <span className="bg-[#138808] h-3 w-3 rounded-full flex-shrink-0"></span>
-                            )}
-                          </div>
-                          <p className="text-sm text-slate-500 mt-1">
-                            {formatDate(notification.created_at)}
-                          </p>
+            {activeTab !== 'settings' && (
+              <Button
+                variant="outline"
+                className="border-[#138808]/30 hover:bg-[#138808]/5 text-[#000080]"
+                onClick={markAllAsRead}
+              >
+                <Check className="mr-2 h-4 w-4 text-[#138808]" />
+                Mark all as read
+              </Button>
+            )}
+          </div>
+          
+          <TabsContent value="all" className="animate-fade-in">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-[#000080]">All Notifications</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {getFilteredNotifications().map(notification => (
+                    <div 
+                      key={notification.id} 
+                      className={`notification-item p-4 rounded-xl border-l-4 ${
+                        notification.read 
+                          ? 'bg-white border-[#138808]/30' 
+                          : 'bg-[#138808]/5 border-[#138808]'
+                      }`}
+                    >
+                      <div className="flex items-start">
+                        <div className="mr-3 mt-1">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                      ))}
+                        <div className="flex-1">
+                          <div className="flex justify-between">
+                            <h3 className="font-medium text-[#000080]">{notification.title}</h3>
+                            <span className="text-xs text-slate-500">
+                              {new Date(notification.time).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-slate-600 mt-1">{notification.message}</p>
+                          
+                          {!notification.read && (
+                            <div className="mt-3">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-xs border-[#138808]/30 hover:bg-[#138808]/5"
+                                onClick={() => markAsRead(notification.id)}
+                              >
+                                <Check className="mr-1 h-3 w-3" />
+                                Mark as read
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {getFilteredNotifications().length === 0 && (
+                    <div className="text-center py-8">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+                        <Bell className="h-6 w-6 text-slate-400" />
+                      </div>
+                      <h3 className="text-lg font-medium text-slate-700">No notifications</h3>
+                      <p className="text-slate-500 mt-1">
+                        {activeTab === 'unread' ? 'You have read all notifications.' : 'You don\'t have any notifications yet.'}
+                      </p>
                     </div>
                   )}
-                </Card>
-
-                {/* Notification Settings */}
-                <Card className="p-6">
-                  <div className="mb-4">
-                    <h2 className="text-xl font-bold text-[#000080]">
-                      Notification Settings
-                    </h2>
-                    <p className="text-slate-600">Customize your notification preferences</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="unread" className="animate-fade-in">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-[#000080]">Unread Notifications</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {getFilteredNotifications().map(notification => (
+                    <div 
+                      key={notification.id} 
+                      className="notification-item p-4 rounded-xl border-l-4 bg-[#138808]/5 border-[#138808]"
+                    >
+                      <div className="flex items-start">
+                        <div className="mr-3 mt-1">
+                          {getNotificationIcon(notification.type)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between">
+                            <h3 className="font-medium text-[#000080]">{notification.title}</h3>
+                            <span className="text-xs text-slate-500">
+                              {new Date(notification.time).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-slate-600 mt-1">{notification.message}</p>
+                          
+                          <div className="mt-3">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs border-[#138808]/30 hover:bg-[#138808]/5"
+                              onClick={() => markAsRead(notification.id)}
+                            >
+                              <Check className="mr-1 h-3 w-3" />
+                              Mark as read
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {getFilteredNotifications().length === 0 && (
+                    <div className="text-center py-8">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+                        <Check className="h-6 w-6 text-[#138808]" />
+                      </div>
+                      <h3 className="text-lg font-medium text-slate-700">All caught up!</h3>
+                      <p className="text-slate-500 mt-1">You have read all notifications.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings" className="animate-fade-in">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-[#000080]">Notification Settings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {settings.map(setting => (
+                    <div 
+                      key={setting.id} 
+                      className="flex items-center justify-between p-3 border rounded-xl border-[#138808]/30"
+                    >
                       <div>
-                        <h3 className="font-medium text-[#000080]">Route Updates</h3>
-                        <p className="text-sm text-slate-500">Notifications when your route changes</p>
+                        <p className="font-medium text-[#000080]">{setting.label}</p>
                       </div>
                       <Switch 
-                        checked={notificationSettings.routeUpdates}
-                        onCheckedChange={() => handleSettingChange('routeUpdates')}
+                        checked={setting.enabled}
+                        onCheckedChange={() => toggleSetting(setting.id)}
                         className="data-[state=checked]:bg-[#138808]"
                       />
                     </div>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-[#000080]">Student Changes</h3>
-                        <p className="text-sm text-slate-500">Notifications about student changes</p>
-                      </div>
-                      <Switch 
-                        checked={notificationSettings.studentChanges}
-                        onCheckedChange={() => handleSettingChange('studentChanges')}
-                        className="data-[state=checked]:bg-[#138808]"
-                      />
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-[#000080]">Delay Notifications</h3>
-                        <p className="text-sm text-slate-500">Notifications about delays</p>
-                      </div>
-                      <Switch 
-                        checked={notificationSettings.delayNotifications}
-                        onCheckedChange={() => handleSettingChange('delayNotifications')}
-                        className="data-[state=checked]:bg-[#138808]"
-                      />
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-[#000080]">School Announcements</h3>
-                        <p className="text-sm text-slate-500">General school announcements</p>
-                      </div>
-                      <Switch 
-                        checked={notificationSettings.schoolAnnouncements}
-                        onCheckedChange={() => handleSettingChange('schoolAnnouncements')}
-                        className="data-[state=checked]:bg-[#138808]"
-                      />
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-[#000080]">Notification Sound</h3>
-                        <p className="text-sm text-slate-500">Play sound for new notifications</p>
-                      </div>
-                      <Switch 
-                        checked={notificationSettings.sound}
-                        onCheckedChange={() => handleSettingChange('sound')}
-                        className="data-[state=checked]:bg-[#138808]"
-                      />
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-[#000080]">Vibration</h3>
-                        <p className="text-sm text-slate-500">Vibrate on new notifications</p>
-                      </div>
-                      <Switch 
-                        checked={notificationSettings.vibration}
-                        onCheckedChange={() => handleSettingChange('vibration')}
-                        className="data-[state=checked]:bg-[#138808]"
-                      />
-                    </div>
-                    
-                    <div className="pt-4">
-                      <Button 
-                        className="w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white text-base"
-                        onClick={saveNotificationSettings}
-                        disabled={isUpdatingSettings}
-                      >
-                        {isUpdatingSettings ? "Saving..." : "Save Settings"}
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+                  ))}
+                  
+                  <Button 
+                    className="mt-4 w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white"
+                  >
+                    Save Settings
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-    </DriverDashboardLayout>
+    </DashboardLayout>
   );
 };
 
-export default Notifications;
+export default DriverNotifications;

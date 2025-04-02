@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -112,15 +113,21 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         icon: "✓"
       },
       {
+        name: "Diary Management",
+        description: "Create and view student diary entries",
+        link: "/teacher/diary",
+        icon: "📝"
+      },
+      {
         name: "Grade Management",
         description: "Enter and view student grades",
         link: "/teacher/grades",
         icon: "📊"
       },
       {
-        name: "Lesson Planning",
-        description: "Create and manage lesson plans",
-        link: "/teacher/lessons",
+        name: "Assessments",
+        description: "Generate and manage AI-driven assessments",
+        link: "/teacher/assessments",
         icon: "📚"
       },
       {
@@ -134,6 +141,24 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         description: "Message parents and send updates",
         link: "/teacher/communication",
         icon: "✉️"
+      },
+      {
+        name: "Lesson Planning",
+        description: "Create and manage lesson plans",
+        link: "/teacher/lessons",
+        icon: "📚"
+      },
+      {
+        name: "Schedule",
+        description: "View class timetables and schedule",
+        link: "/schedule",
+        icon: "📅"
+      },
+      {
+        name: "Notifications",
+        description: "School announcements and updates",
+        link: "/notifications",
+        icon: "📢"
       }
     ]
   },
