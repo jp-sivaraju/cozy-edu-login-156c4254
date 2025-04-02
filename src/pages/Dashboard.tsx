@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -170,6 +169,23 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         description: "Generate and view system reports",
         link: "/admin/reports",
         icon: "📑"
+      }
+    ]
+  },
+  driver: {
+    title: "Driver Dashboard",
+    items: [
+      {
+        name: "Tracking",
+        description: "View and update your current route",
+        link: "/driver/tracking",
+        icon: "🚌"
+      },
+      {
+        name: "Notifications",
+        description: "View important updates and alerts",
+        link: "/driver/notifications",
+        icon: "🔔"
       }
     ]
   }
