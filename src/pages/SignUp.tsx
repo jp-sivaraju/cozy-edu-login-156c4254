@@ -275,6 +275,7 @@ const SignUp = () => {
                         {slots.map((slot, index) => (
                           <InputOTPSlot
                             key={index}
+                            index={index}
                             className="border-edu-green rounded-md"
                             {...slot}
                           />
