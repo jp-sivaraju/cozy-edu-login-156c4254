@@ -4,37 +4,173 @@ import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
 import { LogOutIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Define dashboard features based on role
-const dashboardFeatures: Record<UserRole, {title: string, items: string[]}> = {
+const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, description: string, link: string, icon: string}[]}> = {
   parent: {
     title: "Parent Dashboard",
     items: [
-      "Student Progress",
-      "Fees Payment",
-      "Attendance Report",
-      "Events Calendar",
-      "Teacher Communication"
+      {
+        name: "Student Diary",
+        description: "View daily diary entries and important notes",
+        link: "/diary",
+        icon: "📝"
+      },
+      {
+        name: "Fees Payment",
+        description: "View and pay school fees",
+        link: "/fees",
+        icon: "💰"
+      },
+      {
+        name: "Transport",
+        description: "Track school bus and view route details",
+        link: "/transport",
+        icon: "🚌"
+      },
+      {
+        name: "Smart Alerts",
+        description: "AI-driven alerts about your child",
+        link: "/alerts",
+        icon: "🔔"
+      },
+      {
+        name: "Notifications",
+        description: "School announcements and updates",
+        link: "/notifications",
+        icon: "📢"
+      },
+      {
+        name: "Progress Reports",
+        description: "Academic performance and AI trends",
+        link: "/reports",
+        icon: "📊"
+      },
+      {
+        name: "Schedule",
+        description: "Class timetable and daily schedule",
+        link: "/schedule",
+        icon: "📅"
+      },
+      {
+        name: "Student Profile",
+        description: "Student details and career predictions",
+        link: "/student-profile",
+        icon: "👤"
+      },
+      {
+        name: "Event Calendar",
+        description: "School events and important dates",
+        link: "/calendar",
+        icon: "🗓️"
+      },
+      {
+        name: "Leave Management",
+        description: "Apply for and track leave requests",
+        link: "/leaves",
+        icon: "🏠"
+      },
+      {
+        name: "School Store",
+        description: "Purchase uniforms and books",
+        link: "/store",
+        icon: "🛒"
+      },
+      {
+        name: "Feedback",
+        description: "Share your thoughts with the school",
+        link: "/feedback",
+        icon: "📝"
+      },
+      {
+        name: "Help & Support",
+        description: "FAQs and contact information",
+        link: "/help",
+        icon: "❓"
+      },
+      {
+        name: "Hall Tickets",
+        description: "Download exam hall tickets",
+        link: "/hall-tickets",
+        icon: "🎫"
+      },
+      {
+        name: "Parent-Teacher Meetings",
+        description: "Schedule and feedback for PTMs",
+        link: "/ptm",
+        icon: "👨‍👩‍👧‍👦"
+      }
     ]
   },
   teacher: {
     title: "Teacher Dashboard",
     items: [
-      "Attendance Entry",
-      "Grade Management",
-      "Lesson Planning",
-      "Student Performance",
-      "Parent Communication"
+      {
+        name: "Attendance Entry",
+        description: "Mark student attendance",
+        link: "/teacher/attendance",
+        icon: "✓"
+      },
+      {
+        name: "Grade Management",
+        description: "Enter and view student grades",
+        link: "/teacher/grades",
+        icon: "📊"
+      },
+      {
+        name: "Lesson Planning",
+        description: "Create and manage lesson plans",
+        link: "/teacher/lessons",
+        icon: "📚"
+      },
+      {
+        name: "Student Performance",
+        description: "View detailed student analytics",
+        link: "/teacher/performance",
+        icon: "📈"
+      },
+      {
+        name: "Parent Communication",
+        description: "Message parents and send updates",
+        link: "/teacher/communication",
+        icon: "✉️"
+      }
     ]
   },
   admin: {
     title: "Admin Dashboard",
     items: [
-      "User Management",
-      "School Settings",
-      "Financial Overview",
-      "Staff Management",
-      "System Reports"
+      {
+        name: "User Management",
+        description: "Manage users and roles",
+        link: "/admin/users",
+        icon: "👥"
+      },
+      {
+        name: "School Settings",
+        description: "Configure school parameters",
+        link: "/admin/settings",
+        icon: "⚙️"
+      },
+      {
+        name: "Financial Overview",
+        description: "View financial reports and analytics",
+        link: "/admin/financial",
+        icon: "💹"
+      },
+      {
+        name: "Staff Management",
+        description: "Manage school staff",
+        link: "/admin/staff",
+        icon: "👨‍🏫"
+      },
+      {
+        name: "System Reports",
+        description: "Generate and view system reports",
+        link: "/admin/reports",
+        icon: "📑"
+      }
     ]
   }
 };
@@ -75,18 +211,24 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.items.map((item, index) => (
-            <div 
-              key={index} 
-              className="edu-card hover:shadow-lg transition-shadow"
+            <Link 
+              to={item.link} 
+              key={index}
+              className="block"
             >
-              <h2 className="text-xl font-semibold mb-4">{item}</h2>
-              <p className="text-slate-500 mb-4">
-                Access and manage {item.toLowerCase()} information.
-              </p>
-              <Button className="edu-button-secondary">
-                View {item}
-              </Button>
-            </div>
+              <div className="edu-card hover:shadow-lg transition-shadow h-full">
+                <div className="flex items-start mb-4">
+                  <span className="text-3xl mr-3">{item.icon}</span>
+                  <h2 className="text-xl font-semibold">{item.name}</h2>
+                </div>
+                <p className="text-slate-500 mb-4">
+                  {item.description}
+                </p>
+                <Button className="edu-button-secondary w-full mt-auto">
+                  Open {item.name}
+                </Button>
+              </div>
+            </Link>
           ))}
         </div>
       </main>

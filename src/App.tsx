@@ -11,6 +11,18 @@ import Dashboard from "./pages/Dashboard";
 import Fees from "./pages/Fees";
 import Transport from "./pages/Transport";
 import Diary from "./pages/Diary";
+import Alerts from "./pages/Alerts";
+import Notifications from "./pages/Notifications";
+import Reports from "./pages/Reports";
+import Schedule from "./pages/Schedule";
+import StudentProfile from "./pages/StudentProfile";
+import Calendar from "./pages/Calendar";
+import Leaves from "./pages/Leaves";
+import Store from "./pages/Store";
+import Feedback from "./pages/Feedback";
+import Help from "./pages/Help";
+import HallTickets from "./pages/HallTickets";
+import PTM from "./pages/PTM";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,6 +80,102 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Diary />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/alerts"
+        element={
+          <ProtectedRoute>
+            <Alerts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/schedule"
+        element={
+          <ProtectedRoute>
+            <Schedule />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student-profile"
+        element={
+          <ProtectedRoute>
+            <StudentProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/calendar"
+        element={
+          <ProtectedRoute>
+            <Calendar />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/leaves"
+        element={
+          <ProtectedRoute>
+            <Leaves />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/store"
+        element={
+          <ProtectedRoute>
+            <Store />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/feedback"
+        element={
+          <ProtectedRoute>
+            <Feedback />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/help"
+        element={
+          <ProtectedRoute>
+            <Help />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/hall-tickets"
+        element={
+          <ProtectedRoute>
+            <HallTickets />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ptm"
+        element={
+          <ProtectedRoute>
+            <PTM />
           </ProtectedRoute>
         }
       />
