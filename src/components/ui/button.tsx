@@ -19,7 +19,9 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        tricolor: "bg-[#138808] hover:bg-[#138808]/90 text-white border-2 border-[#FF9933] shadow-md hover:shadow-lg transition-all duration-200",
+        tricolor: "bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border-2 border-[#138808] shadow-md hover:shadow-lg transition-all duration-200",
+        saffron: "bg-[#FF9933] hover:bg-[#FF9933]/90 text-white shadow-md hover:shadow-lg transition-all duration-200",
+        green: "bg-[#138808] hover:bg-[#138808]/90 text-white shadow-md hover:shadow-lg transition-all duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",

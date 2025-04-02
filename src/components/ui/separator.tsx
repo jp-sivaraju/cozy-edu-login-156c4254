@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as SeparatorPrimitive from "@radix-ui/react-separator"
 
@@ -16,8 +17,10 @@ const Separator = React.forwardRef<
       decorative={decorative}
       orientation={orientation}
       className={cn(
-        "shrink-0 bg-border",
-        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        "shrink-0",
+        orientation === "horizontal" 
+          ? "h-[1px] w-full bg-gradient-to-r from-[#FF9933]/30 via-[#138808]/30 to-[#FF9933]/30" 
+          : "h-full w-[1px] bg-gradient-to-b from-[#FF9933]/30 via-[#138808]/30 to-[#FF9933]/30",
         className
       )}
       {...props}

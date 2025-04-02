@@ -77,9 +77,9 @@
   }
 }
 
-/* EduSense custom styles */
+/* EduSense custom styles with Indian Tricolor theme */
 .edu-card {
-  @apply bg-white rounded-2xl shadow-md p-8 border border-[#138808]/20 hover:shadow-lg transition-all duration-300;
+  @apply bg-white rounded-2xl shadow-md p-8 border-2 border-[#138808]/30 hover:shadow-lg transition-all duration-300;
 }
 
 .edu-input {
@@ -87,15 +87,15 @@
 }
 
 .edu-button-primary {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md;
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border-2 border-transparent hover:border-[#138808]/30;
 }
 
 .edu-button-secondary {
-  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md;
+  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border-2 border-transparent hover:border-[#FF9933]/30;
 }
 
 .edu-link {
-  @apply text-[#000080] hover:text-[#000080]/80 transition-colors font-medium;
+  @apply text-[#000080] hover:text-[#000080]/80 transition-colors font-medium border-b border-transparent hover:border-[#000080]/30;
 }
 
 /* Enhanced animations */
@@ -127,12 +127,12 @@
 .btn-primary,
 button[type="submit"],
 .primary-button {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md text-lg border-2 border-transparent hover:border-white;
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-md hover:shadow-lg text-lg border-2 border-[#138808]/30 hover:border-[#138808];
 }
 
 .btn-secondary,
 .secondary-button {
-  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md text-lg border-2 border-transparent hover:border-white;
+  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-md hover:shadow-lg text-lg border-2 border-[#FF9933]/30 hover:border-[#FF9933];
 }
 
 .link-text {
@@ -143,7 +143,7 @@ button[type="submit"],
 input,
 select,
 textarea {
-  @apply rounded-xl border-[#138808]/20 focus:border-[#138808] focus:ring-2 focus:ring-[#138808]/20 text-lg transition-all duration-200;
+  @apply rounded-xl border-[#138808]/30 focus:border-[#138808] focus:ring-2 focus:ring-[#138808]/20 text-lg transition-all duration-200;
 }
 
 /* Labels */
@@ -202,6 +202,56 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Content container with tricolor border accent */
 .tricolor-container {
-  @apply bg-white rounded-xl p-6 shadow-md;
-  background-image: linear-gradient(to right, #FF9933 4px, transparent 4px);
+  @apply bg-white rounded-xl p-6 shadow-md border-l-4 border-[#FF9933];
+}
+
+/* New tricolor theme specific styles */
+.tricolor-card {
+  @apply bg-white rounded-xl border-t-4 border-[#FF9933] border-b-4 border-b-[#138808] shadow-md hover:shadow-lg transition-all duration-300;
+}
+
+.tricolor-header {
+  @apply bg-gradient-to-r from-[#FF9933]/90 to-[#FF9933]/70 text-white p-4 rounded-t-xl shadow-sm;
+}
+
+.tricolor-footer {
+  @apply bg-[#138808]/10 p-4 rounded-b-xl border-t border-[#138808]/20;
+}
+
+.tricolor-divider {
+  @apply h-1 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] my-4;
+}
+
+.tricolor-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-[#000080] border border-[#FF9933] shadow-sm;
+}
+
+.tricolor-button {
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border-2 border-[#138808] shadow-md hover:shadow-lg transition-all rounded-lg px-4 py-2 font-medium;
+}
+
+/* Improve navigation active states */
+.nav-item-active {
+  @apply bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933];
+}
+
+/* Improve table styling */
+.tricolor-table {
+  @apply w-full border-collapse;
+}
+
+.tricolor-table thead tr {
+  @apply bg-[#138808]/10 border-b-2 border-[#138808]/20;
+}
+
+.tricolor-table th {
+  @apply py-3 px-4 text-left text-[#000080] font-semibold;
+}
+
+.tricolor-table tbody tr {
+  @apply border-b border-[#138808]/10 hover:bg-[#FF9933]/5;
+}
+
+.tricolor-table td {
+  @apply py-3 px-4;
 }
