@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Bus, LogOut, User } from 'lucide-react';
+import { Home, FileText, Bus, LogOut, User, Book } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardLayoutProps {
@@ -93,10 +93,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <Link to="/transport">
                   <Button 
                     variant="ghost" 
-                    className={`w-full justify-start ${isActive('/transport') ? 'bg-slate-100 text-[#FF9933]' : ''}`}
+                    className={`w-full justify-start ${isActive('/transport') ? 'bg-slate-100' : ''}`}
                   >
                     <Bus className="h-4 w-4 md:mr-2" />
                     <span className="hidden md:inline">Transport</span>
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Link to="/diary">
+                  <Button 
+                    variant="ghost" 
+                    className={`w-full justify-start ${isActive('/diary') ? 'bg-slate-100 text-[#138808]' : ''}`}
+                  >
+                    <Book className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Diary</span>
                   </Button>
                 </Link>
               </li>
