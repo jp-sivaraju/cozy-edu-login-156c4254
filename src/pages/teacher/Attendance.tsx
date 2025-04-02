@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { toast } from "sonner";
+import { UserCheck, Calendar, HistoryIcon, CheckCircle, XCircle } from 'lucide-react';
 
 // Mock student data - would come from API in production
 const students = [
@@ -50,43 +51,64 @@ const Attendance = () => {
   
   return (
     <DashboardLayout>
-      <div className="container p-6">
-        <h1 className="text-3xl font-bold mb-6 text-[#FF9933]">Attendance Management</h1>
+      <div className="container p-8">
+        <div className="flex items-center gap-3 mb-8">
+          <UserCheck className="h-8 w-8 text-[#FF9933]" />
+          <h1 className="text-3xl font-bold text-[#FF9933]">Attendance Management</h1>
+        </div>
         
         <Tabs defaultValue="today" onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 bg-slate-100">
+          <TabsList className="mb-6 bg-white border border-[#138808]/30 p-1 rounded-xl">
             <TabsTrigger 
               value="today"
-              className={`flex-1 ${activeTab === "today" ? "bg-[#FF9933] text-white" : ""}`}
+              className={`flex-1 py-3 rounded-lg ${activeTab === "today" ? "bg-[#FF9933] text-white" : "text-[#000080] hover:text-[#000080]/80"}`}
             >
-              Today
+              <Calendar className="mr-2 h-5 w-5" />
+              Today's Attendance
             </TabsTrigger>
             <TabsTrigger 
               value="history"
-              className={`flex-1 ${activeTab === "history" ? "bg-[#FF9933] text-white" : ""}`}
+              className={`flex-1 py-3 rounded-lg ${activeTab === "history" ? "bg-[#FF9933] text-white" : "text-[#000080] hover:text-[#000080]/80"}`}
             >
-              History
+              <HistoryIcon className="mr-2 h-5 w-5" />
+              Attendance History
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="today" className="animate-fade-in">
             <Card>
               <CardHeader>
-                <CardTitle className="text-[#000080]">Mark Attendance - Today</CardTitle>
+                <CardTitle className="text-[#000080] flex items-center">
+                  <Calendar className="mr-3 h-6 w-6 text-[#138808]" />
+                  Mark Attendance - Today
+                </CardTitle>
+                <CardDescription className="text-base text-[#000080]/70">
+                  Toggle the switch to mark students as present or absent
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {studentsStatus.map((student) => (
                     <div 
                       key={student.id} 
-                      className="flex items-center justify-between p-3 border rounded-xl border-[#138808]/30"
+                      className={`flex items-center justify-between p-4 border-2 rounded-xl 
+                        ${student.present 
+                          ? 'border-[#138808] bg-[#138808]/5' 
+                          : 'border-red-400 bg-red-50'
+                        } transition-colors duration-200`}
                     >
                       <div>
-                        <p className="font-medium text-[#000080]">{student.name}</p>
-                        <p className="text-sm text-slate-500">ID: {student.id}</p>
+                        <div className="flex items-center">
+                          {student.present 
+                            ? <CheckCircle className="h-5 w-5 mr-2 text-[#138808]" /> 
+                            : <XCircle className="h-5 w-5 mr-2 text-red-500" />
+                          }
+                          <p className="font-semibold text-lg text-[#000080]">{student.name}</p>
+                        </div>
+                        <p className="text-sm text-[#000080]/70 mt-1">ID: {student.id}</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm ${student.present ? 'text-[#138808]' : 'text-red-500'}`}>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-sm font-medium ${student.present ? 'text-[#138808]' : 'text-red-500'}`}>
                           {student.present ? 'Present' : 'Absent'}
                         </span>
                         <Switch 
@@ -100,7 +122,9 @@ const Attendance = () => {
                 </div>
                 
                 <Button 
-                  className="mt-6 w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white"
+                  variant="tricolor"
+                  size="lg"
+                  className="mt-8 w-full"
                   onClick={handleSubmit}
                 >
                   Submit Attendance
@@ -112,26 +136,45 @@ const Attendance = () => {
           <TabsContent value="history" className="animate-fade-in">
             <Card>
               <CardHeader>
-                <CardTitle className="text-[#000080]">Attendance History</CardTitle>
+                <CardTitle className="text-[#000080] flex items-center">
+                  <HistoryIcon className="mr-3 h-6 w-6 text-[#138808]" />
+                  Attendance History
+                </CardTitle>
+                <CardDescription className="text-base text-[#000080]/70">
+                  View past attendance records for all students
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {attendanceHistory.map((day, index) => (
-                  <div key={index} className="mb-6">
-                    <h3 className="text-lg font-medium mb-3 text-[#FF9933]">{day.date}</h3>
+                  <div key={index} className="mb-8">
+                    <h3 className="text-xl font-semibold mb-4 bg-[#FF9933]/10 text-[#FF9933] px-4 py-2 rounded-lg inline-block">
+                      <Calendar className="inline-block mr-2 h-5 w-5" />
+                      {day.date}
+                    </h3>
                     <div className="space-y-3">
                       {day.entries.map((entry) => (
                         <div 
                           key={entry.id} 
-                          className="flex items-center justify-between p-3 border rounded-xl border-[#138808]/30"
+                          className={`flex items-center justify-between p-4 border-l-4 rounded-xl shadow-sm
+                            ${entry.status === 'present' 
+                              ? 'border-l-[#138808] bg-[#138808]/5' 
+                              : 'border-l-red-500 bg-red-50'
+                            }`}
                         >
                           <div>
-                            <p className="font-medium text-[#000080]">{entry.student_name}</p>
-                            <p className="text-sm text-slate-500">ID: {entry.student_id}</p>
+                            <div className="flex items-center">
+                              {entry.status === 'present' 
+                                ? <CheckCircle className="h-5 w-5 mr-2 text-[#138808]" /> 
+                                : <XCircle className="h-5 w-5 mr-2 text-red-500" />
+                              }
+                              <p className="font-medium text-lg text-[#000080]">{entry.student_name}</p>
+                            </div>
+                            <p className="text-sm text-[#000080]/70 mt-1">ID: {entry.student_id}</p>
                           </div>
                           <div>
-                            <span className={`px-3 py-1 rounded-full text-sm ${
+                            <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
                               entry.status === 'present' 
-                                ? 'bg-[#138808]/10 text-[#138808]' 
+                                ? 'bg-[#138808]/20 text-[#138808]' 
                                 : 'bg-red-100 text-red-500'
                             }`}>
                               {entry.status === 'present' ? 'Present' : 'Absent'}

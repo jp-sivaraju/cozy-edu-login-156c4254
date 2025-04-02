@@ -1,13 +1,14 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
 import { LogOutIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 
 // Define dashboard features based on role
-const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, description: string, link: string, icon: string}[]}> = {
+const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, description: string, link: string, icon: string, priority?: boolean}[]}> = {
   parent: {
     title: "Parent Dashboard",
     items: [
@@ -15,13 +16,15 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "Student Diary",
         description: "View daily diary entries and important notes",
         link: "/diary",
-        icon: "📝"
+        icon: "📝",
+        priority: true
       },
       {
         name: "Fees Payment",
         description: "View and pay school fees",
         link: "/fees",
-        icon: "💰"
+        icon: "💰",
+        priority: true
       },
       {
         name: "Transport",
@@ -39,7 +42,8 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "Notifications",
         description: "School announcements and updates",
         link: "/notifications",
-        icon: "📢"
+        icon: "📢",
+        priority: true
       },
       {
         name: "Progress Reports",
@@ -110,19 +114,22 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "Attendance Entry",
         description: "Mark student attendance",
         link: "/teacher/attendance",
-        icon: "✓"
+        icon: "✓",
+        priority: true
       },
       {
         name: "Diary Management",
         description: "Create and view student diary entries",
         link: "/teacher/diary",
-        icon: "📝"
+        icon: "📝",
+        priority: true
       },
       {
         name: "Grade Management",
         description: "Enter and view student grades",
         link: "/teacher/grades",
-        icon: "📊"
+        icon: "📊",
+        priority: true
       },
       {
         name: "Assessments",
@@ -169,7 +176,8 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "User Management",
         description: "Manage users and roles",
         link: "/admin/users",
-        icon: "👥"
+        icon: "👥",
+        priority: true
       },
       {
         name: "School Settings",
@@ -181,7 +189,8 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "Financial Overview",
         description: "View financial reports and analytics",
         link: "/admin/financial",
-        icon: "💹"
+        icon: "💹",
+        priority: true
       },
       {
         name: "Staff Management",
@@ -204,7 +213,8 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
         name: "Tracking",
         description: "View and update your current route",
         link: "/driver/tracking",
-        icon: "🚌"
+        icon: "🚌",
+        priority: true
       },
       {
         name: "Notifications",
@@ -218,6 +228,21 @@ const dashboardFeatures: Record<UserRole, {title: string, items: {name: string, 
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const [hasAnimated, setHasAnimated] = useState(false);
+  
+  useEffect(() => {
+    if (!hasAnimated) {
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FF9933', '#FFFFFF', '#138808']
+        });
+        setHasAnimated(true);
+      }, 800);
+    }
+  }, [hasAnimated]);
   
   if (!user) {
     return null; // Should be handled by protected route
@@ -226,29 +251,32 @@ const Dashboard = () => {
   const features = dashboardFeatures[user.role];
   
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+      <header className="bg-white shadow-md border-b border-[#138808]/20">
         <div className="container mx-auto py-4 px-6 flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="font-medium">{user.name}</p>
-              <p className="text-sm text-slate-500 capitalize">{user.role}</p>
+              <p className="font-bold text-lg text-[#000080]">{user.name}</p>
+              <div className="inline-flex items-center px-3 py-1 bg-[#138808]/10 rounded-full mt-1">
+                <span className="text-sm text-[#138808] font-medium capitalize">{user.role}</span>
+              </div>
             </div>
             <Button 
               variant="outline" 
               size="icon" 
               onClick={logout}
-              className="rounded-full h-10 w-10"
+              className="rounded-full h-10 w-10 border-[#FF9933] hover:bg-[#FF9933]/5"
             >
-              <LogOutIcon className="h-5 w-5" />
+              <LogOutIcon className="h-5 w-5 text-[#FF9933]" />
             </Button>
           </div>
         </div>
       </header>
       
-      <main className="container mx-auto py-8 px-6">
-        <h1 className="text-3xl font-bold mb-8">{features.title}</h1>
+      <main className="container mx-auto py-10 px-6 animate-fade-in">
+        <h1 className="text-3xl font-bold mb-2 text-[#FF9933]">{features.title}</h1>
+        <p className="text-[#000080] mb-8 text-lg">Welcome back! Here's your dashboard.</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.items.map((item, index) => (
@@ -257,17 +285,29 @@ const Dashboard = () => {
               key={index}
               className="block"
             >
-              <div className="edu-card hover:shadow-lg transition-shadow h-full">
+              <div className={`rounded-xl border ${item.priority ? 'border-[#138808]' : 'border-[#138808]/30'} 
+                bg-white p-6 shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col`}>
                 <div className="flex items-start mb-4">
-                  <span className="text-3xl mr-3">{item.icon}</span>
-                  <h2 className="text-xl font-semibold">{item.name}</h2>
+                  <span className="text-3xl mr-4">{item.icon}</span>
+                  <h2 className="text-xl font-bold text-[#000080]">{item.name}</h2>
+                  {item.priority && (
+                    <span className="ml-auto px-2 py-1 bg-[#FF9933]/10 text-[#FF9933] text-xs font-medium rounded-full">
+                      Priority
+                    </span>
+                  )}
                 </div>
-                <p className="text-slate-500 mb-4">
+                <p className="text-[#000080]/80 mb-6 text-base">
                   {item.description}
                 </p>
-                <Button className="edu-button-secondary w-full mt-auto">
-                  Open {item.name}
-                </Button>
+                <div className="mt-auto">
+                  <Button 
+                    variant="tricolor" 
+                    size="lg"
+                    className="w-full"
+                  >
+                    Open {item.name}
+                  </Button>
+                </div>
               </div>
             </Link>
           ))}

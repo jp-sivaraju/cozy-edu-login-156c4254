@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
 import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -60,9 +60,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     if (user.role === 'teacher') {
       return [
         ...commonItems,
-        { path: '/attendance', label: 'Attendance', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
-        { path: '/grades', label: 'Grades', icon: <Award className="h-5 w-5 text-[#138808]" /> },
-        { path: '/communication', label: 'Communication', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/attendance', label: 'Attendance', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/grades', label: 'Grades', icon: <Award className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/communication', label: 'Communication', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
       ];
     }
 
@@ -84,39 +84,39 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navItems = getNavigationItems();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       {/* Top navigation */}
-      <header className="bg-[#FF9933]/95 shadow-md border-b border-[#138808]/20 sticky top-0 z-50">
+      <header className="bg-[#FF9933] shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center">
-            <span className="font-bold text-2xl text-white">EduSense</span>
+            <span className="font-bold text-2xl text-white tracking-wide">EduSense</span>
           </Link>
           
           <div className="flex items-center space-x-4">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-white/10 text-white hover:bg-white/20 rounded-xl">
+                  <NavigationMenuTrigger className="bg-white/20 text-white hover:bg-white/30 rounded-xl border border-white/30">
                     <div className="flex items-center">
                       <User className="mr-2 h-5 w-5" />
-                      <span className="text-lg">{user?.name || 'User'}</span>
+                      <span className="text-lg font-medium">{user?.name || 'User'}</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="p-4 min-w-[240px]">
-                      <div className="mb-3 pb-3 border-b border-[#138808]/20">
-                        <p className="text-lg font-medium text-[#000080]">{user?.name}</p>
-                        <p className="text-base text-slate-500">{user?.email}</p>
-                        <div className="mt-2 inline-block px-3 py-1 bg-[#138808]/10 rounded-full text-sm font-medium text-[#138808]">
-                          {user?.role}
+                    <div className="p-6 min-w-[280px] animate-fade-in">
+                      <div className="mb-4 pb-4 border-b border-[#138808]/20">
+                        <p className="text-xl font-bold text-[#000080]">{user?.name}</p>
+                        <p className="text-base text-slate-600">{user?.email}</p>
+                        <div className="mt-3 inline-flex items-center px-4 py-2 bg-[#138808]/10 rounded-full">
+                          <span className="text-sm font-semibold text-[#138808] capitalize">{user?.role}</span>
                         </div>
                       </div>
                       <Button 
                         variant="outline" 
-                        className="w-full justify-start text-[#000080] rounded-xl border-[#138808]/20 hover:bg-[#138808]/5 hover:text-[#000080] text-base"
+                        className="w-full justify-start text-[#000080] rounded-xl border-[#138808]/30 hover:bg-[#138808]/5 hover:text-[#000080] text-base font-medium"
                         onClick={logout}
                       >
-                        <LogOut className="mr-2 h-5 w-5 text-[#FF9933]" /> Sign out
+                        <LogOut className="mr-3 h-5 w-5 text-[#FF9933]" /> Sign out
                       </Button>
                     </div>
                   </NavigationMenuContent>
@@ -129,18 +129,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       
       {/* Side navigation */}
       <div className="flex h-[calc(100vh-4rem)]">
-        <aside className="w-16 md:w-60 bg-white border-r border-[#138808]/20 shrink-0">
-          <nav className="py-4 md:py-6 px-2 md:px-4 flex flex-col h-full">
-            <ul className="space-y-2 flex-1">
+        <aside className="w-16 md:w-64 bg-white border-r border-[#138808]/20 shrink-0 shadow-md">
+          <nav className="py-6 md:py-8 px-2 md:px-5 flex flex-col h-full">
+            <ul className="space-y-3 flex-1">
               {navItems.map((item) => (
                 <li key={item.path}>
                   <Link to={item.path}>
                     <Button 
                       variant="ghost" 
-                      className={`w-full justify-start rounded-xl py-2.5 ${
+                      className={`w-full justify-start rounded-xl py-3 ${
                         isActive(item.path) 
-                          ? 'bg-[#138808]/10 text-[#000080] font-medium' 
-                          : 'text-slate-600 hover:bg-[#138808]/5 hover:text-[#000080]'
+                          ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
+                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
                       }`}
                     >
                       <span className="flex items-center">
@@ -156,7 +156,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <div className="pt-4 border-t border-[#138808]/20">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-slate-600 hover:bg-[#138808]/5 hover:text-[#000080] rounded-xl py-2.5"
+                className="w-full justify-start text-slate-600 hover:bg-[#138808]/5 hover:text-[#000080] rounded-xl py-3"
                 onClick={logout}
               >
                 <LogOut className="h-5 w-5 text-[#FF9933] mr-3" />
@@ -167,7 +167,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </aside>
         
         {/* Main content */}
-        <main className="flex-1 overflow-auto bg-slate-50">
+        <main className="flex-1 overflow-auto bg-gradient-to-b from-white to-slate-50 animate-fade-in">
           {children}
         </main>
       </div>
