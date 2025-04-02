@@ -19,8 +19,8 @@ const Separator = React.forwardRef<
       className={cn(
         "shrink-0",
         orientation === "horizontal" 
-          ? "h-[1px] w-full bg-gradient-to-r from-[#FF9933]/30 via-[#138808]/30 to-[#FF9933]/30" 
-          : "h-full w-[1px] bg-gradient-to-b from-[#FF9933]/30 via-[#138808]/30 to-[#FF9933]/30",
+          ? "h-[1px] w-full bg-gradient-to-r from-[#FF9933]/40 via-[#138808]/40 to-[#FF9933]/40" 
+          : "h-full w-[1px] bg-gradient-to-b from-[#FF9933]/40 via-[#138808]/40 to-[#FF9933]/40",
         className
       )}
       {...props}
