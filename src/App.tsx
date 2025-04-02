@@ -6,7 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
+import Fees from "./pages/Fees";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       <Route
         path="/dashboard"
         element={
@@ -42,10 +45,18 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/fees"
+        element={
+          <ProtectedRoute>
+            <Fees />
+          </ProtectedRoute>
+        }
+      />
       {/* Redirect from home to dashboard if logged in, otherwise to login */}
       <Route
         path="/"
-        element={<Navigate to="/dashboard" replace />}
+        element={<Navigate to="/login" replace />}
       />
       <Route path="*" element={<NotFound />} />
     </Routes>
