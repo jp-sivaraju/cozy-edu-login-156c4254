@@ -6,6 +6,14 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MapPin, Clock, Bus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+
+// Define Google Maps types to avoid TypeScript errors
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 
 // Mock API service for transport data
 const fetchLiveTracking = async () => {
@@ -35,7 +43,7 @@ const fetchLiveTracking = async () => {
 const LiveTracking = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [map, setMap] = useState<any | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   const { data, isLoading, error } = useQuery({
@@ -53,17 +61,21 @@ const LiveTracking = () => {
     document.head.appendChild(googleMapsScript);
 
     return () => {
-      document.head.removeChild(googleMapsScript);
+      // Clean up script tag on component unmount
+      const scriptTag = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
+      if (scriptTag && scriptTag.parentNode) {
+        scriptTag.parentNode.removeChild(scriptTag);
+      }
     };
   }, []);
 
   useEffect(() => {
-    if (!mapLoaded || !data) return;
+    if (!mapLoaded || !data || !window.google) return;
 
     // Initialize Google Map
     const mapElement = document.getElementById('map');
     if (mapElement) {
-      const newMap = new google.maps.Map(mapElement, {
+      const newMap = new window.google.maps.Map(mapElement, {
         center: { lat: data.live_location.latitude, lng: data.live_location.longitude },
         zoom: 14,
         styles: [
@@ -74,11 +86,11 @@ const LiveTracking = () => {
       setMap(newMap);
 
       // Add bus marker
-      const busMarker = new google.maps.Marker({
+      const busMarker = new window.google.maps.Marker({
         position: { lat: data.live_location.latitude, lng: data.live_location.longitude },
         map: newMap,
         icon: {
-          path: google.maps.SymbolPath.CIRCLE,
+          path: window.google.maps.SymbolPath.CIRCLE,
           scale: 10,
           fillColor: "#FF9933",
           fillOpacity: 1,
@@ -90,11 +102,11 @@ const LiveTracking = () => {
 
       // Add stop markers
       data.stops.forEach((stop, index) => {
-        const stopMarker = new google.maps.Marker({
+        const stopMarker = new window.google.maps.Marker({
           position: { lat: stop.latitude, lng: stop.longitude },
           map: newMap,
           icon: {
-            path: google.maps.SymbolPath.CIRCLE,
+            path: window.google.maps.SymbolPath.CIRCLE,
             scale: 7,
             fillColor: "#138808",
             fillOpacity: 1,
@@ -106,7 +118,7 @@ const LiveTracking = () => {
         });
 
         // Add info window for each stop
-        const infoWindow = new google.maps.InfoWindow({
+        const infoWindow = new window.google.maps.InfoWindow({
           content: `<div style="padding: 5px;">
                       <p style="font-weight: bold; color: #000080;">${stop.stop_name}</p>
                       <p>Arrival time: ${stop.arrival_time}</p>
@@ -124,7 +136,7 @@ const LiveTracking = () => {
         lng: stop.longitude
       }));
 
-      const routePath = new google.maps.Polyline({
+      const routePath = new window.google.maps.Polyline({
         path: routeCoordinates,
         geodesic: true,
         strokeColor: "#000080",
