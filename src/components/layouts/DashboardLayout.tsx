@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare } from 'lucide-react';
+import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare, BookOpen, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import confetti from 'canvas-confetti';
 
@@ -77,6 +77,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return [
       ...commonItems,
       { path: '/users', label: 'Users', icon: <User className="h-5 w-5 text-[#138808]" /> },
+      { path: '/admin/curriculum-generation', label: 'Academics', icon: <GraduationCap className="h-5 w-5 text-[#138808]" /> },
       { path: '/settings', label: 'Settings', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
     ];
   };
@@ -134,21 +135,67 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <ul className="space-y-3 flex-1">
               {navItems.map((item) => (
                 <li key={item.path}>
-                  <Link to={item.path}>
-                    <Button 
-                      variant="ghost" 
-                      className={`w-full justify-start rounded-xl py-3 ${
-                        isActive(item.path) 
-                          ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
-                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
-                      }`}
-                    >
-                      <span className="flex items-center">
-                        {item.icon}
-                        <span className="hidden md:inline ml-3 text-lg">{item.label}</span>
-                      </span>
-                    </Button>
-                  </Link>
+                  {item.label === 'Academics' ? (
+                    <div className="mb-1">
+                      <NavigationMenu orientation="vertical">
+                        <NavigationMenuList className="flex-col items-start">
+                          <NavigationMenuItem className="w-full">
+                            <NavigationMenuTrigger 
+                              className={`w-full justify-start rounded-xl py-3 text-left ${
+                                location.pathname.includes('/admin/') 
+                                  ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
+                                  : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                              }`}
+                            >
+                              <span className="flex items-center">
+                                <GraduationCap className="h-5 w-5 text-[#138808]" />
+                                <span className="hidden md:inline ml-3 text-lg">Academics</span>
+                              </span>
+                            </NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                              <ul className="w-full md:w-[400px] grid p-2 md:grid-cols-1">
+                                <li>
+                                  <Link to="/admin/curriculum-generation">
+                                    <Button 
+                                      variant="ghost" 
+                                      className={`w-full justify-start text-left ${
+                                        isActive('/admin/curriculum-generation') 
+                                          ? 'bg-[#138808]/15 text-[#000080] font-semibold' 
+                                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                                      }`}
+                                    >
+                                      <BookOpen className="h-5 w-5 text-[#FF9933] mr-3" />
+                                      <div>
+                                        <span className="block font-medium text-base">Curriculum Generation</span>
+                                        <span className="block text-xs text-slate-500">Create AI-driven course curricula</span>
+                                      </div>
+                                    </Button>
+                                  </Link>
+                                </li>
+                                {/* Add more academic menu items here as needed */}
+                              </ul>
+                            </NavigationMenuContent>
+                          </NavigationMenuItem>
+                        </NavigationMenuList>
+                      </NavigationMenu>
+                    </div>
+                  ) : (
+                    <Link to={item.path}>
+                      <Button 
+                        variant="ghost" 
+                        className={`w-full justify-start rounded-xl py-3 ${
+                          isActive(item.path) 
+                            ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
+                            : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                        }`}
+                      >
+                        <span className="flex items-center">
+                          {item.icon}
+                          <span className="hidden md:inline ml-3 text-lg">{item.label}</span>
+                        </span>
+                      </Button>
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

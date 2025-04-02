@@ -23,6 +23,7 @@ import Feedback from "./pages/Feedback";
 import Help from "./pages/Help";
 import HallTickets from "./pages/HallTickets";
 import PTM from "./pages/PTM";
+import CurriculumGeneration from "./pages/admin/CurriculumGeneration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -176,6 +177,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <PTM />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/curriculum-generation"
+        element={
+          <ProtectedRoute>
+            <CurriculumGeneration />
           </ProtectedRoute>
         }
       />
