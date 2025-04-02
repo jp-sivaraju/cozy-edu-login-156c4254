@@ -11,9 +11,9 @@ export const fetchStudents = async () => {
   
   // Mock student data
   return [
-    { student_id: 'STU001', name: 'Ravi Sharma', class: '8A' },
-    { student_id: 'STU002', name: 'Amit Kumar', class: '7B' },
-    { student_id: 'STU003', name: 'Priya Patel', class: '9C' },
+    { student_id: 'STU001', name: 'Ravi Sharma', class: '8A', interests: ['Science', 'Art'] },
+    { student_id: 'STU002', name: 'Amit Kumar', class: '7B', interests: ['Mathematics', 'Music'] },
+    { student_id: 'STU003', name: 'Priya Patel', class: '9C', interests: ['Literature', 'Sports'] },
   ];
 };
 
@@ -47,6 +47,40 @@ export const generateCurriculum = async ({ student_id }: { student_id: string })
         }
       ]
     };
+  } else if (student_id === 'STU002') {
+    return {
+      curriculum_id: 'CURR002',
+      student_id: 'STU002',
+      content: [
+        {
+          subject: 'Mathematics',
+          topics: ['Advanced Calculus', 'Linear Algebra', 'Number Theory'],
+          difficulty: 'advanced'
+        },
+        {
+          subject: 'Music',
+          topics: ['Music Theory', 'Instrument Practice', 'Music History'],
+          difficulty: 'intermediate'
+        }
+      ]
+    };
+  } else if (student_id === 'STU003') {
+    return {
+      curriculum_id: 'CURR003',
+      student_id: 'STU003',
+      content: [
+        {
+          subject: 'Literature',
+          topics: ['Poetry Analysis', 'Novel Writing', 'World Literature'],
+          difficulty: 'advanced'
+        },
+        {
+          subject: 'Sports',
+          topics: ['Team Sports', 'Physical Fitness', 'Sports Psychology'],
+          difficulty: 'intermediate'
+        }
+      ]
+    };
   }
   
   // Default curriculum for other students
@@ -75,9 +109,9 @@ export const fetchCurriculum = async (student_id: string) => {
   // In a real app, this would be an API call
   await new Promise(resolve => setTimeout(resolve, 800)); // Simulate API delay
   
-  // If the student is STU001 and we have mock data, return it
-  if (student_id === 'STU001') {
-    return {
+  // Mock data for different students
+  const curriculumData: Record<string, any> = {
+    'STU001': {
       curriculum_id: 'CURR001',
       student_id: 'STU001',
       content: [
@@ -97,11 +131,43 @@ export const fetchCurriculum = async (student_id: string) => {
           difficulty: 'intermediate'
         }
       ]
-    };
-  }
+    },
+    'STU002': {
+      curriculum_id: 'CURR002',
+      student_id: 'STU002',
+      content: [
+        {
+          subject: 'Mathematics',
+          topics: ['Advanced Calculus', 'Linear Algebra', 'Number Theory'],
+          difficulty: 'advanced'
+        },
+        {
+          subject: 'Music',
+          topics: ['Music Theory', 'Instrument Practice', 'Music History'],
+          difficulty: 'intermediate'
+        }
+      ]
+    },
+    'STU003': {
+      curriculum_id: 'CURR003',
+      student_id: 'STU003',
+      content: [
+        {
+          subject: 'Literature',
+          topics: ['Poetry Analysis', 'Novel Writing', 'World Literature'],
+          difficulty: 'advanced'
+        },
+        {
+          subject: 'Sports',
+          topics: ['Team Sports', 'Physical Fitness', 'Sports Psychology'],
+          difficulty: 'intermediate'
+        }
+      ]
+    }
+  };
   
-  // For other students, return null (no curriculum found)
-  return null;
+  // Return curriculum for the specified student or null if not found
+  return curriculumData[student_id] || null;
 };
 
 /**
