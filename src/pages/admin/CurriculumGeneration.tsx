@@ -36,10 +36,19 @@ const CurriculumGeneration = () => {
     queryKey: ['curriculum', selectedStudent],
     queryFn: () => fetchCurriculum(selectedStudent),
     enabled: !!selectedStudent,
-    onSuccess: (data) => {
-      setCurrentCurriculum(data);
+    meta: {
+      onSuccess: (data) => {
+        setCurrentCurriculum(data);
+      }
     }
   });
+
+  // Effect to update currentCurriculum when curriculum data changes
+  useEffect(() => {
+    if (curriculum) {
+      setCurrentCurriculum(curriculum);
+    }
+  }, [curriculum]);
 
   // Generate curriculum mutation
   const { mutate: generateMutation, isPending: isGenerating } = useMutation({
