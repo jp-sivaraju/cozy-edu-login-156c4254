@@ -1,95 +1,36 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare } from 'lucide-react';
+import { MapPin, Bell, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import confetti from 'canvas-confetti';
 
-interface DashboardLayoutProps {
+interface DriverDashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DriverDashboardLayout: React.FC<DriverDashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const [showCelebration, setShowCelebration] = useState(false);
   
-  useEffect(() => {
-    // Show confetti celebration when dashboard loads
-    if (location.pathname === '/dashboard' && !showCelebration) {
-      setTimeout(() => {
-        confetti({
-          particleCount: 150,
-          spread: 80,
-          origin: { y: 0.6 },
-          colors: ['#FF9933', '#FFFFFF', '#138808'] // Tricolor theme colors
-        });
-        setShowCelebration(true);
-      }, 500);
-    }
-  }, [location.pathname, showCelebration]);
-
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
-  // Role-based navigation items
-  const getNavigationItems = () => {
-    const commonItems = [
-      { path: '/dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
-      { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
-      { path: '/diary', label: 'Diary', icon: <Book className="h-5 w-5 text-[#138808]" /> },
-    ];
-
-    if (!user) return commonItems;
-
-    if (user.role === 'parent') {
-      return [
-        ...commonItems,
-        { path: '/fees', label: 'Fees', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
-        { path: '/transport', label: 'Transport', icon: <Bus className="h-5 w-5 text-[#138808]" /> },
-        { path: '/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
-        { path: '/store', label: 'School Store', icon: <ShoppingBag className="h-5 w-5 text-[#138808]" /> },
-        { path: '/student-profile', label: 'Student Profile', icon: <Award className="h-5 w-5 text-[#138808]" /> },
-        { path: '/help', label: 'Help & Support', icon: <HelpCircle className="h-5 w-5 text-[#138808]" /> },
-      ];
-    }
-
-    if (user.role === 'teacher') {
-      return [
-        ...commonItems,
-        { path: '/attendance', label: 'Attendance', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
-        { path: '/grades', label: 'Grades', icon: <Award className="h-5 w-5 text-[#138808]" /> },
-        { path: '/communication', label: 'Communication', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
-      ];
-    }
-
-    if (user.role === 'driver') {
-      return [
-        { path: '/driver/tracking', label: 'Tracking', icon: <Bus className="h-5 w-5 text-[#138808]" /> },
-        { path: '/driver/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
-      ];
-    }
-
-    // Admin items
-    return [
-      ...commonItems,
-      { path: '/users', label: 'Users', icon: <User className="h-5 w-5 text-[#138808]" /> },
-      { path: '/settings', label: 'Settings', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
-    ];
-  };
-
-  const navItems = getNavigationItems();
+  // Navigation items for driver
+  const navigationItems = [
+    { path: '/driver/tracking', label: 'Tracking', icon: <MapPin className="h-5 w-5 text-[#138808]" /> },
+    { path: '/driver/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
       {/* Top navigation */}
       <header className="bg-[#FF9933]/95 shadow-md border-b border-[#138808]/20 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center">
-            <span className="font-bold text-2xl text-white">EduSense</span>
+          <Link to="/driver/tracking" className="flex items-center">
+            <span className="font-bold text-2xl text-white">EduSense Driver</span>
           </Link>
           
           <div className="flex items-center space-x-4">
@@ -99,7 +40,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <NavigationMenuTrigger className="bg-white/10 text-white hover:bg-white/20 rounded-xl">
                     <div className="flex items-center">
                       <User className="mr-2 h-5 w-5" />
-                      <span className="text-lg">{user?.name || 'User'}</span>
+                      <span className="text-lg">{user?.name || 'Driver'}</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -132,7 +73,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <aside className="w-16 md:w-60 bg-white border-r border-[#138808]/20 shrink-0">
           <nav className="py-4 md:py-6 px-2 md:px-4 flex flex-col h-full">
             <ul className="space-y-2 flex-1">
-              {navItems.map((item) => (
+              {navigationItems.map((item) => (
                 <li key={item.path}>
                   <Link to={item.path}>
                     <Button 
@@ -175,4 +116,4 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default DriverDashboardLayout;

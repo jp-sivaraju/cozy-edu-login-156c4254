@@ -37,29 +37,47 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-edu-blue-light via-white to-edu-green-light flex flex-col md:flex-row">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF9F0] via-white to-[#F0FFF0] flex flex-col md:flex-row">
       {/* Left side - Branding */}
       <div className="flex-1 flex flex-col justify-center p-8 md:p-16">
         <div className="max-w-md mx-auto">
           <Logo size="lg" className="mb-8" />
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-4xl font-bold mb-4 text-[#000080]">
             Welcome to the future of education management
           </h1>
           <p className="text-slate-600 text-lg">
-            A secure, intuitive platform connecting parents, teachers, and administrators.
+            A secure, intuitive platform connecting parents, teachers, administrators, and drivers.
           </p>
         </div>
       </div>
 
       {/* Right side - Auth Form */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md edu-card">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 border border-[#138808]/20">
           <div className="mb-8">
             {view === 'login' && (
               <>
-                <h2 className="text-3xl font-semibold mb-2">Sign in</h2>
-                <p className="text-slate-500">
+                <h2 className="text-3xl font-semibold mb-2 text-[#FF9933]">Sign in</h2>
+                <p className="text-[#000080]">
                   Enter your credentials to access your account
+                </p>
+              </>
+            )}
+            
+            {view === 'forgot-password' && (
+              <>
+                <h2 className="text-3xl font-semibold mb-2 text-[#FF9933]">Forgot Password</h2>
+                <p className="text-[#000080]">
+                  Enter your email to receive a password reset link
+                </p>
+              </>
+            )}
+            
+            {view === 'reset-password' && (
+              <>
+                <h2 className="text-3xl font-semibold mb-2 text-[#FF9933]">Reset Password</h2>
+                <p className="text-[#000080]">
+                  Create a new password for your account
                 </p>
               </>
             )}

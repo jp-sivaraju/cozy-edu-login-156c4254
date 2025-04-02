@@ -97,3 +97,58 @@
 .edu-link {
   @apply text-edu-blue hover:text-edu-purple transition-colors font-medium;
 }
+
+/* Tricolor theme overrides */
+.btn-primary,
+button[type="submit"],
+.primary-button {
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all text-lg;
+}
+
+.btn-secondary,
+.secondary-button {
+  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all text-lg;
+}
+
+.link-text {
+  @apply text-[#000080] hover:text-[#000080]/80 font-medium;
+}
+
+/* Form elements */
+input,
+select,
+textarea {
+  @apply rounded-xl border-[#138808]/20 focus:border-[#138808] focus:ring-1 focus:ring-[#138808]/30 text-lg;
+}
+
+/* Labels */
+label {
+  @apply text-[#000080] font-medium text-base;
+}
+
+/* Links */
+a:not(.btn-primary):not(.btn-secondary):not(.no-style) {
+  @apply text-[#000080] hover:text-[#000080]/80 font-medium;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-[#FF9933];
+}
+
+/* EduSense driver specific styles */
+.driver-app-header {
+  @apply bg-[#FF9933] text-white p-4 rounded-b-xl shadow-md;
+}
+
+.driver-app-card {
+  @apply bg-white rounded-2xl border border-[#138808]/20 shadow-md p-4 mb-4;
+}
+
+.stop-marker {
+  @apply bg-[#138808] text-white rounded-full flex items-center justify-center;
+}
+
+.notification-item {
+  @apply border-l-4 border-[#138808] bg-white p-3 rounded-r-xl mb-3 shadow-sm;
+}
