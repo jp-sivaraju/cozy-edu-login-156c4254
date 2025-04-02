@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Bus, LogOut, User, Book } from 'lucide-react';
+import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import confetti from 'canvas-confetti';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,45 +14,102 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [showCelebration, setShowCelebration] = useState(false);
   
+  useEffect(() => {
+    // Show confetti celebration when dashboard loads
+    if (location.pathname === '/dashboard' && !showCelebration) {
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FF9933', '#FFFFFF', '#138808'] // Tricolor theme colors
+        });
+        setShowCelebration(true);
+      }, 500);
+    }
+  }, [location.pathname, showCelebration]);
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
+  // Role-based navigation items
+  const getNavigationItems = () => {
+    const commonItems = [
+      { path: '/dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
+      { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
+      { path: '/diary', label: 'Diary', icon: <Book className="h-5 w-5 text-[#138808]" /> },
+    ];
+
+    if (!user) return commonItems;
+
+    if (user.role === 'parent') {
+      return [
+        ...commonItems,
+        { path: '/fees', label: 'Fees', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+        { path: '/transport', label: 'Transport', icon: <Bus className="h-5 w-5 text-[#138808]" /> },
+        { path: '/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
+        { path: '/store', label: 'School Store', icon: <ShoppingBag className="h-5 w-5 text-[#138808]" /> },
+        { path: '/student-profile', label: 'Student Profile', icon: <Award className="h-5 w-5 text-[#138808]" /> },
+        { path: '/help', label: 'Help & Support', icon: <HelpCircle className="h-5 w-5 text-[#138808]" /> },
+      ];
+    }
+
+    if (user.role === 'teacher') {
+      return [
+        ...commonItems,
+        { path: '/attendance', label: 'Attendance', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+        { path: '/grades', label: 'Grades', icon: <Award className="h-5 w-5 text-[#138808]" /> },
+        { path: '/communication', label: 'Communication', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
+      ];
+    }
+
+    // Admin items
+    return [
+      ...commonItems,
+      { path: '/users', label: 'Users', icon: <User className="h-5 w-5 text-[#138808]" /> },
+      { path: '/settings', label: 'Settings', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+    ];
+  };
+
+  const navItems = getNavigationItems();
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Top navigation */}
-      <header className="bg-white shadow-sm border-b border-slate-200">
+      <header className="bg-[#FF9933]/95 shadow-md border-b border-[#138808]/20 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center">
-            <span className="font-bold text-xl text-[#000080]">EduSense</span>
+            <span className="font-bold text-2xl text-white">EduSense</span>
           </Link>
           
           <div className="flex items-center space-x-4">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-white">
+                  <NavigationMenuTrigger className="bg-white/10 text-white hover:bg-white/20 rounded-xl">
                     <div className="flex items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>{user?.name || 'User'}</span>
+                      <User className="mr-2 h-5 w-5" />
+                      <span className="text-lg">{user?.name || 'User'}</span>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="p-4 min-w-[220px]">
-                      <div className="mb-2 pb-2 border-b border-slate-100">
-                        <p className="font-medium">{user?.name}</p>
-                        <p className="text-sm text-slate-500">{user?.email}</p>
-                        <div className="mt-1 inline-block px-2 py-1 bg-[#138808]/10 rounded-full text-xs font-medium text-[#138808]">
+                    <div className="p-4 min-w-[240px]">
+                      <div className="mb-3 pb-3 border-b border-[#138808]/20">
+                        <p className="text-lg font-medium text-[#000080]">{user?.name}</p>
+                        <p className="text-base text-slate-500">{user?.email}</p>
+                        <div className="mt-2 inline-block px-3 py-1 bg-[#138808]/10 rounded-full text-sm font-medium text-[#138808]">
                           {user?.role}
                         </div>
                       </div>
                       <Button 
                         variant="outline" 
-                        className="w-full justify-start text-slate-700"
+                        className="w-full justify-start text-[#000080] rounded-xl border-[#138808]/20 hover:bg-[#138808]/5 hover:text-[#000080] text-base"
                         onClick={logout}
                       >
-                        <LogOut className="mr-2 h-4 w-4" /> Sign out
+                        <LogOut className="mr-2 h-5 w-5 text-[#FF9933]" /> Sign out
                       </Button>
                     </div>
                   </NavigationMenuContent>
@@ -64,71 +122,45 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       
       {/* Side navigation */}
       <div className="flex h-[calc(100vh-4rem)]">
-        <aside className="w-16 md:w-56 bg-white border-r border-slate-200 shrink-0">
+        <aside className="w-16 md:w-60 bg-white border-r border-[#138808]/20 shrink-0">
           <nav className="py-4 md:py-6 px-2 md:px-4 flex flex-col h-full">
-            <ul className="space-y-1 flex-1">
-              <li>
-                <Link to="/dashboard">
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-start ${isActive('/dashboard') ? 'bg-slate-100' : ''}`}
-                  >
-                    <Home className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Dashboard</span>
-                  </Button>
-                </Link>
-              </li>
-              <li>
-                <Link to="/fees">
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-start ${isActive('/fees') ? 'bg-slate-100' : ''}`}
-                  >
-                    <FileText className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Fees</span>
-                  </Button>
-                </Link>
-              </li>
-              <li>
-                <Link to="/transport">
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-start ${isActive('/transport') ? 'bg-slate-100' : ''}`}
-                  >
-                    <Bus className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Transport</span>
-                  </Button>
-                </Link>
-              </li>
-              <li>
-                <Link to="/diary">
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-start ${isActive('/diary') ? 'bg-slate-100 text-[#138808]' : ''}`}
-                  >
-                    <Book className="h-4 w-4 md:mr-2" />
-                    <span className="hidden md:inline">Diary</span>
-                  </Button>
-                </Link>
-              </li>
-              {/* Additional menu items can be added here */}
+            <ul className="space-y-2 flex-1">
+              {navItems.map((item) => (
+                <li key={item.path}>
+                  <Link to={item.path}>
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start rounded-xl py-2.5 ${
+                        isActive(item.path) 
+                          ? 'bg-[#138808]/10 text-[#000080] font-medium' 
+                          : 'text-slate-600 hover:bg-[#138808]/5 hover:text-[#000080]'
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        {item.icon}
+                        <span className="hidden md:inline ml-3 text-base">{item.label}</span>
+                      </span>
+                    </Button>
+                  </Link>
+                </li>
+              ))}
             </ul>
             
-            <div className="pt-4 border-t border-slate-200">
+            <div className="pt-4 border-t border-[#138808]/20">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-slate-700"
+                className="w-full justify-start text-slate-600 hover:bg-[#138808]/5 hover:text-[#000080] rounded-xl py-2.5"
                 onClick={logout}
               >
-                <LogOut className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Logout</span>
+                <LogOut className="h-5 w-5 text-[#FF9933] mr-3" />
+                <span className="hidden md:inline text-base">Logout</span>
               </Button>
             </div>
           </nav>
         </aside>
         
         {/* Main content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bg-slate-50">
           {children}
         </main>
       </div>
