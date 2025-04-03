@@ -6,6 +6,7 @@ import Logo from '@/components/Logo';
 import LoginForm from '@/components/LoginForm';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm';
 import ResetPasswordForm from '@/components/ResetPasswordForm';
+import { motion } from 'framer-motion';
 
 type AuthView = 'login' | 'forgot-password' | 'reset-password';
 
@@ -37,23 +38,50 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF9F0] via-white to-[#F0FFF0] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-gradient-to-br from-white via-white to-[#F0FFF0] flex flex-col md:flex-row relative">
+      {/* Background overlay with school-related image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-10 z-0"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9')" }}
+      />
+
       {/* Left side - Branding */}
-      <div className="flex-1 flex flex-col justify-center p-8 md:p-16">
+      <motion.div 
+        className="flex-1 flex flex-col justify-center p-8 md:p-16 z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="max-w-md mx-auto">
-          <Logo size="lg" className="mb-8" />
+          <div className="flex items-center">
+            <Logo size="lg" className="mb-8" />
+            <img 
+              src="/placeholder.svg" 
+              alt="School Logo" 
+              className="h-12 w-12 ml-4 mb-8" 
+            />
+          </div>
           <h1 className="text-4xl font-bold mb-4 text-[#000080]">
             Welcome to the future of education management
+            <span className="block h-1 w-32 bg-[#138808] mt-2 rounded-full"></span>
           </h1>
-          <p className="text-slate-600 text-lg">
+          <p className="text-slate-600 text-lg mb-3">
             A secure, intuitive platform connecting parents, teachers, administrators, and drivers.
           </p>
+          <p className="text-[#000080] text-lg font-medium">
+            Empowering Learning at Modern School
+          </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Right side - Auth Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 border border-[#138808]/20">
+      <div className="flex-1 flex items-center justify-center p-8 z-10">
+        <motion.div 
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 border border-[#138808]/20"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <div className="mb-8">
             {view === 'login' && (
               <>
@@ -101,7 +129,7 @@ const Login = () => {
               onSuccess={handleResetSuccess} 
             />
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
