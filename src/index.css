@@ -79,19 +79,19 @@
 
 /* EduSense custom styles with Indian Tricolor theme */
 .edu-card {
-  @apply bg-white rounded-2xl shadow-md p-8 border-2 border-[#138808]/30 hover:shadow-lg transition-all duration-300;
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 border border-[#138808]/20 hover:shadow-lg transition-all duration-300;
 }
 
 .edu-input {
-  @apply rounded-xl bg-slate-50 border-[#138808]/30 focus:border-[#138808] focus:ring-[#138808]/20;
+  @apply rounded-xl bg-slate-50/90 border-[#138808]/30 focus:border-[#138808] focus:ring-[#138808]/20;
 }
 
 .edu-button-primary {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border-2 border-transparent hover:border-[#138808]/30;
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#138808]/30;
 }
 
 .edu-button-secondary {
-  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border-2 border-transparent hover:border-[#FF9933]/30;
+  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#FF9933]/30;
 }
 
 .edu-link {
@@ -172,7 +172,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .driver-app-card {
-  @apply bg-white rounded-2xl border-2 border-[#138808]/30 shadow-md p-6 mb-4 hover:shadow-lg transition-all duration-300;
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-[#138808]/30 shadow-md p-6 mb-4 hover:shadow-lg transition-all duration-300;
 }
 
 .stop-marker {
@@ -180,7 +180,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-item {
-  @apply border-l-4 border-[#138808] bg-white p-4 rounded-r-xl mb-3 shadow-sm hover:shadow-md transition-all;
+  @apply border-l-4 border-[#138808] bg-white/90 backdrop-blur-sm p-4 rounded-r-xl mb-3 shadow-sm hover:shadow-md transition-all;
 }
 
 /* Status badges */
@@ -202,12 +202,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Content container with tricolor border accent */
 .tricolor-container {
-  @apply bg-white rounded-xl p-6 shadow-md border-l-4 border-[#FF9933];
+  @apply bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border-l-4 border-[#FF9933];
 }
 
 /* New tricolor theme specific styles */
 .tricolor-card {
-  @apply bg-white rounded-xl border-t-4 border-[#FF9933] border-b-4 border-b-[#138808] shadow-md hover:shadow-lg transition-all duration-300;
+  @apply bg-white/90 backdrop-blur-sm rounded-xl border-t-4 border-[#FF9933] border-b-4 border-b-[#138808] shadow-md hover:shadow-lg transition-all duration-300;
 }
 
 .tricolor-header {
@@ -227,7 +227,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tricolor-button {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border-2 border-[#138808] shadow-md hover:shadow-lg transition-all rounded-lg px-4 py-2 font-medium;
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border border-[#138808]/30 shadow-md hover:shadow-lg transition-all rounded-lg px-4 py-2 font-medium;
 }
 
 /* Improve navigation active states */
@@ -241,7 +241,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tricolor-table thead tr {
-  @apply bg-[#138808]/10 border-b-2 border-[#138808]/20;
+  @apply bg-[#138808]/10 border-b border-[#138808]/20;
 }
 
 .tricolor-table th {
@@ -254,4 +254,49 @@ h1, h2, h3, h4, h5, h6 {
 
 .tricolor-table td {
   @apply py-3 px-4;
+}
+
+/* Premium glass morphism effects */
+.glass-card {
+  @apply bg-white/70 backdrop-blur-md rounded-xl border border-white/40 shadow-lg;
+}
+
+.glass-input {
+  @apply bg-white/50 backdrop-blur-sm border-[#138808]/20 focus:border-[#138808]/40 focus:bg-white/80;
+}
+
+/* Premium gradients */
+.premium-gradient-1 {
+  @apply bg-gradient-to-br from-[#f7f9ff] to-[#ebf4ff];
+}
+
+.premium-gradient-2 {
+  @apply bg-gradient-to-r from-[#f9fcff] via-[#f6fcfc] to-[#f0fff4];
+}
+
+.premium-gradient-3 {
+  @apply bg-gradient-to-tr from-[#ffefc5] to-[#ffcab8];
+}
+
+/* 3D elements */
+.premium-card {
+  @apply rounded-xl border border-[#138808]/10 bg-gradient-to-br from-white to-[#f8fbff] shadow-[0_10px_30px_-15px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_35px_-15px_rgba(0,0,0,0.25)] transition-all duration-300;
+}
+
+/* Improved spacing and visual hierarchy */
+.section-content {
+  @apply max-w-6xl mx-auto py-12 px-6 space-y-12;
+}
+
+/* New subtle animations */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1;
+}
+
+.hover-glow {
+  @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,153,51,0.4)];
+}
+
+.hover-expand {
+  @apply transition-all duration-300 hover:scale-[1.02];
 }

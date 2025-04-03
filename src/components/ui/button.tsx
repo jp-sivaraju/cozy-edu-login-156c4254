@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -19,10 +19,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        tricolor: "bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border-2 border-[#138808] shadow-md hover:shadow-lg transition-all duration-200",
-        saffron: "bg-[#FF9933] text-white hover:bg-[#FF9933]/90 shadow-md hover:shadow-lg transition-all duration-200 border border-[#FF9933]/30",
-        green: "bg-[#138808] text-white hover:bg-[#138808]/90 shadow-md hover:shadow-lg transition-all duration-200 border border-[#138808]/30",
-        navy: "bg-[#000080] text-white hover:bg-[#000080]/90 shadow-md hover:shadow-lg transition-all duration-200 border border-[#000080]/30",
+        tricolor: "bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border border-[#138808]/20 shadow-md hover:shadow-lg transition-all duration-200",
+        saffron: "bg-gradient-to-r from-[#FF9933] to-[#FFAC33] text-white hover:from-[#FF9933]/95 hover:to-[#FFAC33]/95 shadow-md hover:shadow-lg transition-all duration-200 border border-[#FF9933]/30",
+        green: "bg-gradient-to-r from-[#138808] to-[#1DA010] text-white hover:from-[#138808]/95 hover:to-[#1DA010]/95 shadow-md hover:shadow-lg transition-all duration-200 border border-[#138808]/30",
+        navy: "bg-gradient-to-r from-[#000080] to-[#0000A0] text-white hover:from-[#000080]/95 hover:to-[#0000A0]/95 shadow-md hover:shadow-lg transition-all duration-200 border border-[#000080]/30",
+        premium: "bg-gradient-to-r from-[#FF9933] via-[#FFC879] to-[#FF9933] bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-md hover:shadow-lg transition-all duration-500 border border-[#138808]/20",
+        glass: "bg-white/70 backdrop-blur-md border border-white/40 text-[#000080] hover:bg-white/80 shadow-md hover:shadow-lg transition-all duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",
