@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -85,6 +84,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* Standard protected routes */}
       <Route
         path="/fees"
         element={
@@ -225,7 +226,35 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Additional Admin routes */}
+      {/* New Admin Routes for all modules */}
+      <Route path="/admin/users" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/staff" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/onboarding" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/exams/schedule" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/report-cards" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/lesson-plans" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/routes" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/transport/assign" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/routes/assign" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/financial" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/fees" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/concessions" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/fees/bulk-approve" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/hall-tickets" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/hall-tickets/bulk-approve" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/notifications" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/messages" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/reports" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/analytics" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/settings" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/library" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/inventory" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/homework" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/payroll" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/website" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/academic-reports" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+      {/* Catch-all admin route */}
       <Route path="/admin/*" element={
         <AdminRoute>
           <AdminDashboard />

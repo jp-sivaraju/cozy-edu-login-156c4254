@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { 
   Home, Settings, LogOut, User, FileBarChart, GraduationCap, DollarSign, 
   Bell, Award, Bus, Users, MessageSquare, Library, Box, 
-  Clock, Globe, BookOpen, Database, BarChart2
+  Clock, Globe, BookOpen, Database, BarChart2, Layers, UserCheck,
+  FileSpreadsheet, Calendar, FileText, Book, Navigation, LifeBuoy,
+  Receipt, BadgePercent, FileCheck, Ticket
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { TricolorCard } from "@/components/ui/card";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -100,15 +101,50 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { path: '/admin/settings', label: 'Settings', icon: <Settings className="h-5 w-5 text-[#138808]" /> },
     { 
       path: '/admin/library', 
-      label: 'Additional Features', 
-      icon: <Database className="h-5 w-5 text-[#138808]" />,
+      label: 'Library Management', 
+      icon: <Library className="h-5 w-5 text-[#138808]" />,
       submenu: [
         { path: '/admin/library', label: 'Library Management' },
-        { path: '/admin/inventory', label: 'Inventory Management' },
-        { path: '/admin/homework', label: 'Homework Management' },
-        { path: '/admin/payroll', label: 'HR/Payroll' },
-        { path: '/admin/website', label: 'School Website' },
-        { path: '/admin/academic-reports', label: 'Academic Reports' },
+      ]
+    },
+    { 
+      path: '/admin/inventory', 
+      label: 'Inventory Management', 
+      icon: <Box className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/inventory', label: 'Track Inventory' },
+      ]
+    },
+    { 
+      path: '/admin/homework', 
+      label: 'Homework Management', 
+      icon: <Book className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/homework', label: 'Homework Assignments' },
+      ]
+    },
+    { 
+      path: '/admin/payroll', 
+      label: 'HR/Payroll', 
+      icon: <Clock className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/payroll', label: 'Manage Payroll' },
+      ]
+    },
+    { 
+      path: '/admin/website', 
+      label: 'School Website', 
+      icon: <Globe className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/website', label: 'Website Content' },
+      ]
+    },
+    { 
+      path: '/admin/academic-reports', 
+      label: 'Academic Reports', 
+      icon: <FileBarChart className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/academic-reports', label: 'Performance Reports' },
       ]
     },
   ];
