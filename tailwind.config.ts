@@ -74,6 +74,10 @@ export default {
 				"edu-pink-light": "#FFDEE2",
 				"edu-purple": "#9B7EDE",
 				"edu-purple-light": "#E5DEFF",
+                // Tricolor theme
+                "saffron": "#FF9933",
+                "navy": "#000080",
+                "green": "#138808",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -108,7 +112,30 @@ export default {
 				'slide-in': {
 					'0%': { transform: 'translateX(-20px)', opacity: '0' },
 					'100%': { transform: 'translateX(0)', opacity: '1' }
-				}
+				},
+                'shimmer': {
+                    '0%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
+                    '100%': { backgroundPosition: '0% 50%' }
+                },
+                'float': {
+                    '0%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                    '100%': { transform: 'translateY(0)' }
+                },
+                'pulse-gentle': {
+                    '0%, 100%': { opacity: '1' },
+                    '50%': { opacity: '0.8' }
+                },
+                'gradient-flow': {
+                    '0%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
+                    '100%': { backgroundPosition: '0% 50%' }
+                },
+                'bounce-gentle': {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-5px)' }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -117,7 +144,12 @@ export default {
 				'fade-out': 'fade-out 0.3s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
 				'scale-out': 'scale-out 0.3s ease-out',
-				'slide-in': 'slide-in 0.3s ease-out'
+				'slide-in': 'slide-in 0.3s ease-out',
+                'shimmer': 'shimmer 6s ease infinite',
+                'float': 'float 3s ease-in-out infinite',
+                'pulse-gentle': 'pulse-gentle 3s ease-in-out infinite',
+                'gradient-flow': 'gradient-flow 8s ease infinite',
+                'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
 			},
 			backgroundSize: {
 				'size-200': '200% 200%',
@@ -126,6 +158,9 @@ export default {
 				'pos-0': '0% 0%',
 				'pos-100': '100% 100%',
 			},
+            backdropBlur: {
+                'xs': '2px',
+            }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

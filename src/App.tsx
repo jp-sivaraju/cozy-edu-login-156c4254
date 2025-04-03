@@ -24,6 +24,8 @@ import Help from "./pages/Help";
 import HallTickets from "./pages/HallTickets";
 import PTM from "./pages/PTM";
 import CurriculumGeneration from "./pages/admin/CurriculumGeneration";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLayout from "./components/layouts/AdminLayout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,29 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   return <>{children}</>;
+};
+
+// Admin route component - ensures user is admin
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-16 w-16 border-4 border-t-edu-blue border-edu-blue-light rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (user.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <AdminLayout>{children}</AdminLayout>;
 };
 
 const AppRoutes = () => {
@@ -180,14 +205,26 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* Admin routes */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+      
       <Route
         path="/admin/curriculum-generation"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <CurriculumGeneration />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
+      
       {/* Redirect from home to dashboard if logged in, otherwise to login */}
       <Route
         path="/"

@@ -77,4 +77,60 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+// Premium card variants
+const PremiumCard = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-xl border border-[#FF9933]/20 bg-gradient-to-br from-white via-white to-[#F9F9F9] backdrop-blur-md text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
+      className
+    )}
+    {...props}
+  />
+))
+PremiumCard.displayName = "PremiumCard"
+
+const GlassCard = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-xl border border-white/40 bg-white/70 backdrop-blur-lg text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
+      className
+    )}
+    {...props}
+  />
+))
+GlassCard.displayName = "GlassCard"
+
+const TricolorCard = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-xl overflow-hidden backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in border-t-4 border-t-[#FF9933] border-b-4 border-b-[#138808] border-x border-x-[#138808]/10 bg-white/80",
+      className
+    )}
+    {...props}
+  />
+))
+TricolorCard.displayName = "TricolorCard"
+
+export { 
+  Card, 
+  CardHeader, 
+  CardFooter, 
+  CardTitle, 
+  CardDescription, 
+  CardContent,
+  PremiumCard,
+  GlassCard,
+  TricolorCard
+}

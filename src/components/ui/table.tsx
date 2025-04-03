@@ -106,6 +106,37 @@ const TableCaption = React.forwardRef<
 ))
 TableCaption.displayName = "TableCaption"
 
+// Premium table variants
+const GlassTable = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto rounded-lg backdrop-blur-md bg-white/60 border border-white/40 shadow-md">
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
+  </div>
+))
+GlassTable.displayName = "GlassTable"
+
+const TricolorTable = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto rounded-lg shadow-md">
+    <div className="h-2 w-full bg-[#FF9933]"></div>
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm bg-white", className)}
+      {...props}
+    />
+    <div className="h-2 w-full bg-[#138808]"></div>
+  </div>
+))
+TricolorTable.displayName = "TricolorTable"
+
 export {
   Table,
   TableHeader,
@@ -115,4 +146,6 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  GlassTable,
+  TricolorTable
 }

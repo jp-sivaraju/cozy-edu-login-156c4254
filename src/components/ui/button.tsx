@@ -25,6 +25,13 @@ const buttonVariants = cva(
         navy: "bg-gradient-to-r from-[#000080] to-[#0000A0] text-white hover:from-[#000080]/95 hover:to-[#0000A0]/95 shadow-md hover:shadow-lg transition-all duration-200 border border-[#000080]/30",
         premium: "bg-gradient-to-r from-[#FF9933] via-[#FFC879] to-[#FF9933] bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-md hover:shadow-lg transition-all duration-500 border border-[#138808]/20",
         glass: "bg-white/70 backdrop-blur-md border border-white/40 text-[#000080] hover:bg-white/80 shadow-md hover:shadow-lg transition-all duration-200",
+        subtle: "bg-white/90 backdrop-blur-sm border border-[#138808]/10 text-[#000080] hover:bg-[#138808]/5 hover:text-[#000080] shadow-sm hover:shadow transition-all duration-200",
+        'premium-dark': "bg-gradient-to-r from-[#000080] via-[#3030A0] to-[#000080] bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-md hover:shadow-lg transition-all duration-500 border border-[#000080]/20",
+        'premium-green': "bg-gradient-to-r from-[#138808] via-[#35A82C] to-[#138808] bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-md hover:shadow-lg transition-all duration-500 border border-[#138808]/20",
+        'card-button': "bg-white/80 backdrop-blur-md border border-[#138808]/20 text-[#000080] hover:bg-[#FF9933]/10 hover:border-[#FF9933]/30 shadow-sm hover:shadow transition-all duration-200",
+        'glass-blue': "bg-gradient-to-r from-[#000080]/10 to-[#000080]/5 backdrop-blur-md border border-[#000080]/20 text-[#000080] hover:bg-[#000080]/15 shadow-sm hover:shadow transition-all duration-200",
+        'glass-saffron': "bg-gradient-to-r from-[#FF9933]/10 to-[#FF9933]/5 backdrop-blur-md border border-[#FF9933]/20 text-[#FF9933] hover:bg-[#FF9933]/15 shadow-sm hover:shadow transition-all duration-200",
+        'glass-green': "bg-gradient-to-r from-[#138808]/10 to-[#138808]/5 backdrop-blur-md border border-[#138808]/20 text-[#138808] hover:bg-[#138808]/15 shadow-sm hover:shadow transition-all duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",
