@@ -1,428 +1,269 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
+import { Button } from "@/components/ui/button";
+import { 
+  Home, Settings, LogOut, User, FileBarChart, GraduationCap, DollarSign, 
+  Bell, Award, Bus, Users, MessageSquare, Library, Box, 
+  Clock, Globe, BookOpen, Database, BarChart2
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetTrigger 
-} from '@/components/ui/sheet';
-import {
-  Users,
-  UserPlus,
-  FileSpreadsheet,
-  GraduationCap,
-  Calendar,
-  FileText,
-  Book,
-  Bus,
-  Navigation,
-  LifeBuoy,
-  DollarSign,
-  Receipt,
-  BadgePercent,
-  FileCheck,
-  Ticket,
-  Bell,
-  MessageSquare,
-  BarChart2,
-  AreaChart,
-  Settings,
-  Library,
-  Box,
-  Home,
-  Clock,
-  Menu,
-  X,
-  ChevronDown,
-  ChevronRight,
-  Globe,
-  FileBarChart,
-  LogOut,
-  User,
-  Search,
-} from "lucide-react";
-import Logo from '@/components/Logo';
-import { 
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { TricolorCard } from "@/components/ui/card";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-}
-
-interface NavItemProps {
-  title: string;
-  path: string;
-  icon: React.ReactNode;
-  badge?: number | string;
-  isActive?: boolean;
-}
-
-interface NavGroupProps {
-  title: string;
-  icon: React.ReactNode;
-  children: NavItemProps[];
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  // Check if a path is active
+
+  // Function to check if a path is active
   const isActive = (path: string) => {
     return location.pathname === path;
   };
-  
-  // Handle group toggle
-  const toggleGroup = (title: string) => {
-    setOpenGroups(prev =>
-      prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title]
-    );
-  };
-  
-  // Define navigation groups with their items
-  const navGroups: NavGroupProps[] = [
-    {
-      title: "Administration",
-      icon: <Users className="h-5 w-5" />,
-      children: [
-        { title: "User Management", path: "/admin/users", icon: <Users className="h-5 w-5" />, badge: 14 },
-        { title: "Staff Management", path: "/admin/staff", icon: <UserPlus className="h-5 w-5" /> },
-        { title: "Bulk Onboarding", path: "/admin/onboarding", icon: <FileSpreadsheet className="h-5 w-5" /> },
+
+  // Admin navigation items with expanded submenus
+  const navItems = [
+    { path: '/admin', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
+    { 
+      path: '/admin/users', 
+      label: 'User Management', 
+      icon: <Users className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/users', label: 'Manage Users' },
+        { path: '/admin/staff', label: 'Staff Management' },
+        { path: '/admin/onboarding', label: 'Bulk Onboarding' },
+      ] 
+    },
+    { 
+      path: '/admin/curriculum-generation', 
+      label: 'Academics', 
+      icon: <GraduationCap className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/curriculum-generation', label: 'Curriculum Generation' },
+        { path: '/admin/exams/schedule', label: 'Exam Schedules' },
+        { path: '/admin/report-cards', label: 'Report Cards' },
+        { path: '/admin/lesson-plans', label: 'Lesson Planning' },
       ]
     },
-    {
-      title: "Academics",
-      icon: <GraduationCap className="h-5 w-5" />,
-      children: [
-        { title: "Curriculum Generation", path: "/admin/curriculum-generation", icon: <GraduationCap className="h-5 w-5" /> },
-        { title: "Exam Schedules", path: "/admin/exams/schedule", icon: <Calendar className="h-5 w-5" /> },
-        { title: "Report Cards", path: "/admin/report-cards", icon: <FileText className="h-5 w-5" /> },
-        { title: "Lesson Planning", path: "/admin/lesson-plans", icon: <Book className="h-5 w-5" /> },
+    { 
+      path: '/admin/routes', 
+      label: 'Transport', 
+      icon: <Bus className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/routes', label: 'Route Definition' },
+        { path: '/admin/transport/assign', label: 'Assign Transport' },
+        { path: '/admin/routes/assign', label: 'Route Assignment' },
       ]
     },
-    {
-      title: "Transport",
-      icon: <Bus className="h-5 w-5" />,
-      children: [
-        { title: "Route Definition", path: "/admin/routes", icon: <Navigation className="h-5 w-5" /> },
-        { title: "Assign Transport", path: "/admin/transport/assign", icon: <Bus className="h-5 w-5" /> },
-        { title: "Route Assignment", path: "/admin/routes/assign", icon: <LifeBuoy className="h-5 w-5" /> },
+    { 
+      path: '/admin/financial', 
+      label: 'Finance', 
+      icon: <DollarSign className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/financial', label: 'Financial Overview' },
+        { path: '/admin/fees', label: 'Fee Management' },
+        { path: '/admin/concessions', label: 'Concessions' },
+        { path: '/admin/fees/bulk-approve', label: 'Bulk Approvals' },
       ]
     },
-    {
-      title: "Finance",
-      icon: <DollarSign className="h-5 w-5" />,
-      children: [
-        { title: "Financial Overview", path: "/admin/financial", icon: <DollarSign className="h-5 w-5" /> },
-        { title: "Fee Management", path: "/admin/fees", icon: <Receipt className="h-5 w-5" /> },
-        { title: "Concessions", path: "/admin/concessions", icon: <BadgePercent className="h-5 w-5" /> },
-        { title: "Bulk Approvals", path: "/admin/fees/bulk-approve", icon: <FileCheck className="h-5 w-5" /> },
+    { 
+      path: '/admin/hall-tickets', 
+      label: 'Examinations', 
+      icon: <Award className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/hall-tickets', label: 'Hall Tickets' },
+        { path: '/admin/hall-tickets/bulk-approve', label: 'Bulk Approvals' },
       ]
     },
-    {
-      title: "Examinations",
-      icon: <Ticket className="h-5 w-5" />,
-      children: [
-        { title: "Hall Tickets", path: "/admin/hall-tickets", icon: <Ticket className="h-5 w-5" /> },
-        { title: "Bulk Approvals", path: "/admin/hall-tickets/bulk-approve", icon: <FileCheck className="h-5 w-5" /> },
+    { 
+      path: '/admin/notifications', 
+      label: 'Communications', 
+      icon: <Bell className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/notifications', label: 'Notifications' },
+        { path: '/admin/messages', label: 'Messages/Circulars' },
       ]
     },
-    {
-      title: "Communications",
-      icon: <Bell className="h-5 w-5" />,
-      children: [
-        { title: "Notifications", path: "/admin/notifications", icon: <Bell className="h-5 w-5" /> },
-        { title: "Messages/Circulars", path: "/admin/messages", icon: <MessageSquare className="h-5 w-5" /> },
+    { 
+      path: '/admin/reports', 
+      label: 'Reports', 
+      icon: <FileBarChart className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/reports', label: 'System Reports' },
+        { path: '/admin/analytics', label: 'Analytics' },
       ]
     },
-    {
-      title: "Reports",
-      icon: <BarChart2 className="h-5 w-5" />,
-      children: [
-        { title: "System Reports", path: "/admin/reports", icon: <BarChart2 className="h-5 w-5" /> },
-        { title: "Analytics", path: "/admin/analytics", icon: <AreaChart className="h-5 w-5" /> },
-      ]
-    },
-    {
-      title: "Additional Features",
-      icon: <Library className="h-5 w-5" />,
-      children: [
-        { title: "Library Management", path: "/admin/library", icon: <Library className="h-5 w-5" /> },
-        { title: "Inventory Management", path: "/admin/inventory", icon: <Box className="h-5 w-5" /> },
-        { title: "Homework Management", path: "/admin/homework", icon: <Home className="h-5 w-5" /> },
-        { title: "HR/Payroll", path: "/admin/payroll", icon: <Clock className="h-5 w-5" /> },
-        { title: "School Website", path: "/admin/website", icon: <Globe className="h-5 w-5" /> },
-        { title: "Academic Reports", path: "/admin/academic-reports", icon: <FileBarChart className="h-5 w-5" /> },
-      ]
-    },
-    {
-      title: "Settings",
-      icon: <Settings className="h-5 w-5" />,
-      children: [
-        { title: "School Settings", path: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
+    { path: '/admin/settings', label: 'Settings', icon: <Settings className="h-5 w-5 text-[#138808]" /> },
+    { 
+      path: '/admin/library', 
+      label: 'Additional Features', 
+      icon: <Database className="h-5 w-5 text-[#138808]" />,
+      submenu: [
+        { path: '/admin/library', label: 'Library Management' },
+        { path: '/admin/inventory', label: 'Inventory Management' },
+        { path: '/admin/homework', label: 'Homework Management' },
+        { path: '/admin/payroll', label: 'HR/Payroll' },
+        { path: '/admin/website', label: 'School Website' },
+        { path: '/admin/academic-reports', label: 'Academic Reports' },
       ]
     },
   ];
-  
-  // Automatically open group for active path
-  useEffect(() => {
-    navGroups.forEach(group => {
-      const hasActivePath = group.children.some(item => isActive(item.path));
-      if (hasActivePath && !openGroups.includes(group.title)) {
-        setOpenGroups(prev => [...prev, group.title]);
-      }
-    });
-  }, [location.pathname]);
-  
-  // Filter navigation items based on search
-  const filteredNavGroups = searchQuery.length > 0 
-    ? navGroups.map(group => ({
-        ...group,
-        children: group.children.filter(item => 
-          item.title.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      })).filter(group => group.children.length > 0)
-    : navGroups;
 
-  const NavItem = ({ title, path, icon, badge, isActive }: NavItemProps) => (
-    <Link 
-      to={path} 
-      className={`flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium transition-colors duration-200
-        ${isActive 
-          ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
-          : 'text-[#000080]/80 hover:bg-[#FF9933]/5 hover:text-[#000080]'
-        }`}
-    >
-      <div className="flex items-center space-x-3">
-        <div className={`${isActive ? 'text-[#FF9933]' : 'text-[#138808]'}`}>
-          {icon}
-        </div>
-        <span>{title}</span>
-      </div>
-      {badge && (
-        <span className="px-2 py-0.5 bg-[#FF9933]/20 text-[#FF9933] text-xs font-bold rounded-full">
-          {badge}
-        </span>
-      )}
-    </Link>
-  );
-  
-  const NavGroup = ({ title, icon, children }: NavGroupProps) => {
-    const isOpen = openGroups.includes(title);
-    const hasActivePath = children.some(item => isActive(item.path));
-    
+  // Render submenu items for navigation
+  const renderSubmenu = (submenuItems: any[]) => {
     return (
-      <Collapsible open={isOpen} onOpenChange={() => toggleGroup(title)} className="w-full">
-        <CollapsibleTrigger className="w-full">
-          <div className={`flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium transition-colors duration-200
-              ${hasActivePath 
-                ? 'bg-[#138808]/10 text-[#000080]' 
-                : 'text-[#000080]/80 hover:bg-[#FF9933]/5'}`}>
-            <div className="flex items-center space-x-3">
-              <div className={`${hasActivePath ? 'text-[#FF9933]' : 'text-[#138808]'}`}>
-                {icon}
-              </div>
-              <span>{title}</span>
-            </div>
-            {isOpen ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </div>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="ml-4 mt-1 space-y-1 border-l border-[#138808]/20 pl-4">
-          {children.map((item) => (
-            <NavItem 
-              key={item.path} 
-              title={item.title} 
-              path={item.path} 
-              icon={item.icon}
-              badge={item.badge}
-              isActive={isActive(item.path)}
-            />
-          ))}
-        </CollapsibleContent>
-      </Collapsible>
+      <ul className="w-full md:w-[250px] grid p-2 md:grid-cols-1">
+        {submenuItems.map((item, idx) => (
+          <li key={idx}>
+            <Link to={item.path}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start text-left ${
+                  isActive(item.path) 
+                    ? 'bg-[#138808]/15 text-[#000080] font-semibold' 
+                    : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                }`}
+              >
+                <div>
+                  <span className="block font-medium text-base">{item.label}</span>
+                </div>
+              </Button>
+            </Link>
+          </li>
+        ))}
+      </ul>
     );
   };
-  
-  const MobileNav = () => (
-    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="md:hidden"
-          onClick={() => setIsMobileMenuOpen(true)}
-        >
-          <Menu className="h-6 w-6 text-[#138808]" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] sm:w-[350px] bg-white border-r border-[#138808]/20">
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-[#138808]/20">
-            <Logo />
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <X className="h-5 w-5 text-[#138808]" />
-            </Button>
-          </div>
-          
-          <div className="p-4 border-b border-[#138808]/20">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-[#FF9933]/20 flex items-center justify-center">
-                <User className="h-5 w-5 text-[#FF9933]" />
-              </div>
-              <div>
-                <p className="font-bold text-[#000080]">{user?.name}</p>
-                <p className="text-sm text-[#000080]/70">{user?.role}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-4 border-b border-[#138808]/20">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#138808]/60" />
-              <input
-                type="text"
-                placeholder="Search modules..."
-                className="w-full bg-white border border-[#138808]/30 rounded-lg pl-9 pr-4 py-2 text-[#000080] placeholder:text-[#000080]/40 focus:outline-none focus:ring-2 focus:ring-[#138808]/30"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="flex-1 overflow-auto p-4 space-y-2">
-            <Button
-              variant="glass"
-              className="w-full justify-start mb-2"
-              onClick={() => {
-                navigate("/admin");
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              <Home className="h-5 w-5 text-[#138808] mr-3" />
-              Dashboard Home
-            </Button>
-            
-            {filteredNavGroups.map((group) => (
-              <NavGroup 
-                key={group.title}
-                title={group.title}
-                icon={group.icon}
-                children={group.children}
-              />
-            ))}
-          </div>
-          
-          <div className="p-4 border-t border-[#138808]/20">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start text-[#000080] border-[#FF9933]/30 hover:bg-[#FF9933]/5"
-              onClick={() => {
-                logout();
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              <LogOut className="mr-3 h-5 w-5 text-[#FF9933]" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-slate-50">
-      {/* Header */}
-      <header className="bg-white shadow-md border-b border-[#138808]/20 py-4 px-6 sticky top-0 z-40">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <MobileNav />
-            <Link to="/admin" className="hidden md:block">
-              <Logo />
-            </Link>
-          </div>
-          
-          <div className="hidden md:flex items-center px-4 py-2 bg-white border border-[#138808]/20 rounded-lg shadow-sm">
-            <Search className="h-4 w-4 text-[#138808]/60 mr-2" />
-            <input
-              type="text"
-              placeholder="Search modules..."
-              className="bg-transparent border-none text-[#000080] placeholder:text-[#000080]/40 focus:outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center space-x-1">
-              <div className="inline-flex items-center px-3 py-1 bg-[#138808]/10 rounded-full">
-                <span className="text-sm text-[#138808] font-medium capitalize">{user?.role}</span>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-[#000080]">{user?.name}</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={logout}
-              className="rounded-full h-10 w-10 border-[#FF9933] hover:bg-[#FF9933]/5"
-            >
-              <LogOut className="h-5 w-5 text-[#FF9933]" />
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex">
+      {/* Side navigation */}
+      <aside className="w-16 md:w-64 bg-white border-r border-[#138808]/20 shrink-0 shadow-md h-screen sticky top-0">
+        <div className="p-4 border-b border-[#138808]/20">
+          <Link to="/admin" className="flex items-center justify-center md:justify-start">
+            <span className="font-bold text-xl text-[#FF9933] hidden md:inline">EduSense Admin</span>
+            <span className="font-bold text-xl text-[#FF9933] md:hidden">EA</span>
+          </Link>
         </div>
-      </header>
+        
+        <nav className="py-6 md:py-8 px-2 md:px-5 flex flex-col h-[calc(100vh-5rem)] overflow-auto">
+          <ul className="space-y-3 flex-1">
+            {navItems.map((item, index) => (
+              <li key={index}>
+                {item.submenu ? (
+                  <div className="mb-1">
+                    <NavigationMenu orientation="vertical">
+                      <NavigationMenuList className="flex-col items-start">
+                        <NavigationMenuItem className="w-full">
+                          <NavigationMenuTrigger 
+                            className={`w-full justify-start rounded-xl py-3 text-left ${
+                              location.pathname.includes(item.path) && item.path !== '/admin' 
+                                ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
+                                : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                            }`}
+                          >
+                            <span className="flex items-center">
+                              {item.icon}
+                              <span className="hidden md:inline ml-3 text-lg">{item.label}</span>
+                            </span>
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            {renderSubmenu(item.submenu)}
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
+                  </div>
+                ) : (
+                  <Link to={item.path}>
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start rounded-xl py-3 ${
+                        isActive(item.path) 
+                          ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
+                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        {item.icon}
+                        <span className="hidden md:inline ml-3 text-lg">{item.label}</span>
+                      </span>
+                    </Button>
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+          
+          <div className="pt-4 border-t border-[#138808]/20">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem className="w-full">
+                  <NavigationMenuTrigger 
+                    className="w-full justify-start rounded-xl py-2 text-left bg-transparent hover:bg-[#138808]/5"
+                  >
+                    <span className="flex items-center">
+                      <User className="h-5 w-5 text-[#FF9933]" />
+                      <span className="hidden md:inline ml-3 text-lg text-slate-700">{user?.name || 'Admin'}</span>
+                    </span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="p-6 min-w-[280px] animate-fade-in">
+                      <div className="mb-4 pb-4 border-b border-[#138808]/20">
+                        <p className="text-xl font-bold text-[#000080]">{user?.name}</p>
+                        <p className="text-base text-slate-600">{user?.email}</p>
+                        <div className="mt-3 inline-flex items-center px-4 py-2 bg-[#138808]/10 rounded-full">
+                          <span className="text-sm font-semibold text-[#138808] capitalize">{user?.role}</span>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start text-[#000080] rounded-xl border-[#138808]/30 hover:bg-[#138808]/5 hover:text-[#000080] text-base font-medium"
+                        onClick={logout}
+                      >
+                        <LogOut className="mr-3 h-5 w-5 text-[#FF9933]" /> Sign out
+                      </Button>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        </nav>
+      </aside>
       
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="hidden md:block w-64 bg-white border-r border-[#138808]/20 overflow-y-auto">
-          <div className="p-4">
-            <Button
-              variant="glass"
-              className="w-full justify-start mb-4"
-              onClick={() => navigate("/admin")}
-            >
-              <Home className="h-5 w-5 text-[#138808] mr-3" />
-              Dashboard Home
-            </Button>
-            
-            <div className="space-y-2">
-              {filteredNavGroups.map((group) => (
-                <NavGroup 
-                  key={group.title}
-                  title={group.title}
-                  icon={group.icon}
-                  children={group.children}
-                />
-              ))}
+      <main className="flex-1 overflow-auto">
+        <header className="bg-[#FF9933] shadow-md">
+          <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
+              <p className="text-white/80 text-sm">Welcome back, {user?.name || 'Admin'}</p>
             </div>
+            <Button
+              variant="ghost"
+              className="text-white hover:bg-white/20 rounded-xl border border-white/30"
+              onClick={() => navigate('/dashboard')}
+            >
+              Back to Main Dashboard
+            </Button>
           </div>
-        </aside>
+        </header>
         
-        {/* Content */}
-        <main className="flex-1 overflow-auto animate-fade-in">
+        <div className="container mx-auto px-6 py-8">
           {children}
-        </main>
-      </div>
+        </div>
+        
+        <footer className="bg-white border-t border-[#138808]/10 py-4">
+          <div className="container mx-auto px-6 text-center text-[#000080]/60 text-sm">
+            &copy; {new Date().getFullYear()} EduSense Admin Portal. All rights reserved.
+          </div>
+        </footer>
+      </main>
     </div>
   );
 };

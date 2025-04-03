@@ -3,7 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, MessageSquare, BookOpen, GraduationCap } from 'lucide-react';
+import { 
+  Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, 
+  MessageSquare, BookOpen, GraduationCap, Settings, FileBarChart, DollarSign, Users, 
+  Library, Box, Clock, Database, BarChart2
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import confetti from 'canvas-confetti';
 
@@ -73,16 +77,122 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       ];
     }
 
-    // Admin items
+    // Admin items with expanded menu
     return [
-      ...commonItems,
-      { path: '/users', label: 'Users', icon: <User className="h-5 w-5 text-[#138808]" /> },
-      { path: '/admin/curriculum-generation', label: 'Academics', icon: <GraduationCap className="h-5 w-5 text-[#138808]" /> },
-      { path: '/settings', label: 'Settings', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+      { path: '/admin', label: 'Admin Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
+      { 
+        path: '/admin/users', 
+        label: 'User Management', 
+        icon: <Users className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/users', label: 'Manage Users' },
+          { path: '/admin/staff', label: 'Staff Management' },
+          { path: '/admin/onboarding', label: 'Bulk Onboarding' },
+        ] 
+      },
+      { 
+        path: '/admin/curriculum-generation', 
+        label: 'Academics', 
+        icon: <GraduationCap className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/curriculum-generation', label: 'Curriculum Generation' },
+          { path: '/admin/exams/schedule', label: 'Exam Schedules' },
+          { path: '/admin/report-cards', label: 'Report Cards' },
+          { path: '/admin/lesson-plans', label: 'Lesson Planning' },
+        ]
+      },
+      { 
+        path: '/admin/routes', 
+        label: 'Transport', 
+        icon: <Bus className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/routes', label: 'Route Definition' },
+          { path: '/admin/transport/assign', label: 'Assign Transport' },
+          { path: '/admin/routes/assign', label: 'Route Assignment' },
+        ]
+      },
+      { 
+        path: '/admin/financial', 
+        label: 'Finance', 
+        icon: <DollarSign className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/financial', label: 'Financial Overview' },
+          { path: '/admin/fees', label: 'Fee Management' },
+          { path: '/admin/concessions', label: 'Concessions' },
+          { path: '/admin/fees/bulk-approve', label: 'Bulk Approvals' },
+        ]
+      },
+      { 
+        path: '/admin/hall-tickets', 
+        label: 'Examinations', 
+        icon: <Award className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/hall-tickets', label: 'Hall Tickets' },
+          { path: '/admin/hall-tickets/bulk-approve', label: 'Bulk Approvals' },
+        ]
+      },
+      { 
+        path: '/admin/notifications', 
+        label: 'Communications', 
+        icon: <Bell className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/notifications', label: 'Notifications' },
+          { path: '/admin/messages', label: 'Messages/Circulars' },
+        ]
+      },
+      { 
+        path: '/admin/reports', 
+        label: 'Reports', 
+        icon: <FileBarChart className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/reports', label: 'System Reports' },
+          { path: '/admin/analytics', label: 'Analytics' },
+        ]
+      },
+      { path: '/admin/settings', label: 'Settings', icon: <Settings className="h-5 w-5 text-[#138808]" /> },
+      { 
+        path: '/admin/library', 
+        label: 'Additional Features', 
+        icon: <Database className="h-5 w-5 text-[#138808]" />,
+        submenu: [
+          { path: '/admin/library', label: 'Library Management' },
+          { path: '/admin/inventory', label: 'Inventory Management' },
+          { path: '/admin/homework', label: 'Homework Management' },
+          { path: '/admin/payroll', label: 'HR/Payroll' },
+          { path: '/admin/website', label: 'School Website' },
+          { path: '/admin/academic-reports', label: 'Academic Reports' },
+        ]
+      },
     ];
   };
 
   const navItems = getNavigationItems();
+
+  // Render submenu items for admin navigation
+  const renderSubmenu = (submenuItems: any[]) => {
+    return (
+      <ul className="w-full md:w-[250px] grid p-2 md:grid-cols-1">
+        {submenuItems.map((item, idx) => (
+          <li key={idx}>
+            <Link to={item.path}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start text-left ${
+                  isActive(item.path) 
+                    ? 'bg-[#138808]/15 text-[#000080] font-semibold' 
+                    : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
+                }`}
+              >
+                <div>
+                  <span className="block font-medium text-base">{item.label}</span>
+                </div>
+              </Button>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
@@ -132,48 +242,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <div className="flex h-[calc(100vh-4rem)]">
         <aside className="w-16 md:w-64 bg-white border-r border-[#138808]/20 shrink-0 shadow-md">
           <nav className="py-6 md:py-8 px-2 md:px-5 flex flex-col h-full">
-            <ul className="space-y-3 flex-1">
-              {navItems.map((item) => (
-                <li key={item.path}>
-                  {item.label === 'Academics' ? (
+            <ul className="space-y-3 flex-1 overflow-y-auto">
+              {navItems.map((item, index) => (
+                <li key={index}>
+                  {item.submenu ? (
                     <div className="mb-1">
                       <NavigationMenu orientation="vertical">
                         <NavigationMenuList className="flex-col items-start">
                           <NavigationMenuItem className="w-full">
                             <NavigationMenuTrigger 
                               className={`w-full justify-start rounded-xl py-3 text-left ${
-                                location.pathname.includes('/admin/') 
+                                location.pathname.includes(item.path) 
                                   ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
                                   : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
                               }`}
                             >
                               <span className="flex items-center">
-                                <GraduationCap className="h-5 w-5 text-[#138808]" />
-                                <span className="hidden md:inline ml-3 text-lg">Academics</span>
+                                {item.icon}
+                                <span className="hidden md:inline ml-3 text-lg">{item.label}</span>
                               </span>
                             </NavigationMenuTrigger>
                             <NavigationMenuContent>
-                              <ul className="w-full md:w-[400px] grid p-2 md:grid-cols-1">
-                                <li>
-                                  <Link to="/admin/curriculum-generation">
-                                    <Button 
-                                      variant="ghost" 
-                                      className={`w-full justify-start text-left ${
-                                        isActive('/admin/curriculum-generation') 
-                                          ? 'bg-[#138808]/15 text-[#000080] font-semibold' 
-                                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
-                                      }`}
-                                    >
-                                      <BookOpen className="h-5 w-5 text-[#FF9933] mr-3" />
-                                      <div>
-                                        <span className="block font-medium text-base">Curriculum Generation</span>
-                                        <span className="block text-xs text-slate-500">Create AI-driven course curricula</span>
-                                      </div>
-                                    </Button>
-                                  </Link>
-                                </li>
-                                {/* Add more academic menu items here as needed */}
-                              </ul>
+                              {renderSubmenu(item.submenu)}
                             </NavigationMenuContent>
                           </NavigationMenuItem>
                         </NavigationMenuList>

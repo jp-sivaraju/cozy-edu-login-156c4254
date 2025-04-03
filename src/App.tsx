@@ -224,6 +224,13 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+
+      {/* Additional Admin routes */}
+      <Route path="/admin/*" element={
+        <AdminRoute>
+          <AdminDashboard />
+        </AdminRoute>
+      } />
       
       {/* Redirect from home to dashboard if logged in, otherwise to login */}
       <Route
