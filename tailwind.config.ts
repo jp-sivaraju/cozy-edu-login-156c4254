@@ -135,7 +135,11 @@ export default {
                 'bounce-gentle': {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-5px)' }
-                }
+                },
+				'ripple': {
+					'0%': { transform: 'scale(0)', opacity: '1' },
+					'100%': { transform: 'scale(4)', opacity: '0' }
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -149,7 +153,8 @@ export default {
                 'float': 'float 3s ease-in-out infinite',
                 'pulse-gentle': 'pulse-gentle 3s ease-in-out infinite',
                 'gradient-flow': 'gradient-flow 8s ease infinite',
-                'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
+                'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
+				'ripple': 'ripple 0.6s linear'
 			},
 			backgroundSize: {
 				'size-200': '200% 200%',

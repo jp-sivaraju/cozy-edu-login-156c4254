@@ -77,32 +77,28 @@
   }
 }
 
-/* EduSense custom styles with Indian Tricolor theme */
-.edu-card {
-  @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 border border-[#138808]/20 hover:shadow-lg transition-all duration-300;
+/* Glassmorphism effects */
+.glass-card {
+  @apply bg-white/70 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg;
 }
 
-.edu-input {
-  @apply rounded-xl bg-slate-50/90 border-[#138808]/30 focus:border-[#138808] focus:ring-[#138808]/20;
+.dark .glass-card {
+  @apply bg-slate-900/40 border-white/10;
 }
 
-.edu-button-primary {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#138808]/30;
+.glass-input {
+  @apply bg-white/50 backdrop-blur-sm border-[#138808]/30 focus:border-[#138808]/60 focus:bg-white/80;
 }
 
-.edu-button-secondary {
-  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#FF9933]/30;
+.dark .glass-input {
+  @apply bg-slate-900/50 border-slate-700 focus:border-slate-500 focus:bg-slate-900/70;
 }
 
-.edu-link {
-  @apply text-[#000080] hover:text-[#000080]/80 transition-colors font-medium border-b border-transparent hover:border-[#000080]/30;
-}
-
-/* Enhanced animations */
-@keyframes fadeIn {
+/* Improved animations */
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -119,163 +115,180 @@
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
 .animate-pulse-slow {
   animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Tricolor theme overrides with enhanced styling */
-.btn-primary,
-button[type="submit"],
-.primary-button {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-md hover:shadow-lg text-lg border-2 border-[#138808]/30 hover:border-[#138808];
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.btn-secondary,
-.secondary-button {
-  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-md hover:shadow-lg text-lg border-2 border-[#FF9933]/30 hover:border-[#FF9933];
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
 }
 
-.link-text {
-  @apply text-[#000080] hover:text-[#000080]/80 font-medium border-b-2 border-transparent hover:border-[#000080]/30 transition-all;
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
 }
 
-/* Form elements */
-input,
-select,
-textarea {
-  @apply rounded-xl border-[#138808]/30 focus:border-[#138808] focus:ring-2 focus:ring-[#138808]/20 text-lg transition-all duration-200;
+/* EduSense custom styles with Indian Tricolor theme */
+.edu-card {
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 border border-[#138808]/20 hover:shadow-lg transition-all duration-300;
 }
 
-/* Labels */
-label {
-  @apply text-[#000080] font-medium text-base;
+.dark .edu-card {
+  @apply bg-slate-900/50 border-slate-700/50 shadow-md;
 }
 
-/* Links */
-a:not(.btn-primary):not(.btn-secondary):not(.no-style) {
-  @apply text-[#000080] hover:text-[#000080]/80 font-medium transition-all;
+.edu-input {
+  @apply rounded-xl bg-slate-50/90 border-[#138808]/30 focus:border-[#138808] focus:ring-[#138808]/20;
 }
 
-/* Headers */
-h1, h2, h3, h4, h5, h6 {
-  @apply text-[#FF9933] font-bold;
+.dark .edu-input {
+  @apply bg-slate-900/50 border-slate-700 focus:border-slate-500 focus:ring-slate-600/20;
 }
 
-/* Card element hover effect */
-.hover-card {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+.edu-button-primary {
+  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#138808]/30;
 }
 
-/* EduSense driver specific styles with enhancements */
-.driver-app-header {
-  @apply bg-[#FF9933] text-white p-4 rounded-b-xl shadow-md border-b-4 border-[#138808];
+.dark .edu-button-primary {
+  @apply bg-[#FF9933]/90 hover:bg-[#FF9933] border-[#FF9933]/30 hover:border-[#FF9933]/50;
 }
 
-.driver-app-card {
-  @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-[#138808]/30 shadow-md p-6 mb-4 hover:shadow-lg transition-all duration-300;
+.edu-button-secondary {
+  @apply bg-[#138808] hover:bg-[#138808]/90 text-white rounded-xl py-3 px-4 font-medium transition-all shadow-sm hover:shadow-md border border-transparent hover:border-[#FF9933]/30;
 }
 
-.stop-marker {
-  @apply bg-[#138808] text-white rounded-full flex items-center justify-center shadow-md;
+.dark .edu-button-secondary {
+  @apply bg-[#138808]/90 hover:bg-[#138808] border-[#138808]/30 hover:border-[#138808]/50;
 }
 
-.notification-item {
-  @apply border-l-4 border-[#138808] bg-white/90 backdrop-blur-sm p-4 rounded-r-xl mb-3 shadow-sm hover:shadow-md transition-all;
+.edu-link {
+  @apply text-[#000080] hover:text-[#000080]/80 transition-colors font-medium border-b border-transparent hover:border-[#000080]/30;
 }
 
-/* Status badges */
-.status-badge {
-  @apply px-3 py-1 rounded-full text-sm font-medium;
+.dark .edu-link {
+  @apply text-blue-400 hover:text-blue-300 hover:border-blue-400/30;
 }
 
-.status-badge-success {
-  @apply bg-[#138808]/20 text-[#138808] status-badge;
+/* Button hover effects */
+.btn-hover-expand {
+  @apply relative overflow-hidden transition-all duration-300;
 }
 
-.status-badge-warning {
-  @apply bg-[#FF9933]/20 text-[#FF9933] status-badge;
+.btn-hover-expand::after {
+  @apply content-[''] absolute top-0 left-0 w-full h-0 bg-white/20 transition-all duration-300;
 }
 
-.status-badge-danger {
-  @apply bg-red-100 text-red-600 status-badge;
+.btn-hover-expand:hover::after {
+  @apply h-full;
 }
 
-/* Content container with tricolor border accent */
-.tricolor-container {
-  @apply bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border-l-4 border-[#FF9933];
+/* Gradient text */
+.text-gradient {
+  @apply bg-gradient-to-r from-[#FF9933] to-[#138808] text-transparent bg-clip-text;
 }
 
-/* New tricolor theme specific styles */
-.tricolor-card {
-  @apply bg-white/90 backdrop-blur-sm rounded-xl border-t-4 border-[#FF9933] border-b-4 border-b-[#138808] shadow-md hover:shadow-lg transition-all duration-300;
+.dark .text-gradient {
+  @apply from-[#FFB366] to-[#1EC76E];
 }
 
-.tricolor-header {
-  @apply bg-gradient-to-r from-[#FF9933]/90 to-[#FF9933]/70 text-white p-4 rounded-t-xl shadow-sm;
+/* Rich form controls */
+.form-control-rich {
+  @apply relative glass-card p-6 transition-all duration-300 hover:shadow-md;
 }
 
-.tricolor-footer {
-  @apply bg-[#138808]/10 p-4 rounded-b-xl border-t border-[#138808]/20;
+.form-control-floating {
+  @apply relative overflow-hidden;
 }
 
-.tricolor-divider {
-  @apply h-1 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] my-4;
+.form-control-floating label {
+  @apply absolute left-3 top-2 text-slate-500 transition-all duration-200 pointer-events-none;
 }
 
-.tricolor-badge {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-[#000080] border border-[#FF9933] shadow-sm;
+.form-control-floating input:focus + label,
+.form-control-floating input:not(:placeholder-shown) + label {
+  @apply transform -translate-y-4 scale-75 text-[#138808];
 }
 
-.tricolor-button {
-  @apply bg-[#FF9933] hover:bg-[#FF9933]/90 text-white border border-[#138808]/30 shadow-md hover:shadow-lg transition-all rounded-lg px-4 py-2 font-medium;
+/* Status indicators with animations */
+.status-indicator {
+  @apply inline-block w-2 h-2 rounded-full;
 }
 
-/* Improve navigation active states */
-.nav-item-active {
-  @apply bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933];
+.status-indicator-active {
+  @apply bg-[#138808] animate-pulse-slow;
 }
 
-/* Improve table styling */
-.tricolor-table {
-  @apply w-full border-collapse;
+.status-indicator-warning {
+  @apply bg-[#FF9933] animate-pulse-slow;
 }
 
-.tricolor-table thead tr {
-  @apply bg-[#138808]/10 border-b border-[#138808]/20;
+.status-indicator-inactive {
+  @apply bg-slate-400;
 }
 
-.tricolor-table th {
-  @apply py-3 px-4 text-left text-[#000080] font-semibold;
+/* Enhanced shadows for cards */
+.card-shadow-hover {
+  @apply transition-shadow duration-300 hover:shadow-[0_10px_40px_-15px_rgba(0,0,128,0.3)];
 }
 
-.tricolor-table tbody tr {
-  @apply border-b border-[#138808]/10 hover:bg-[#FF9933]/5;
-}
-
-.tricolor-table td {
-  @apply py-3 px-4;
-}
-
-/* Premium glass morphism effects */
-.glass-card {
-  @apply bg-white/70 backdrop-blur-md rounded-xl border border-white/40 shadow-lg;
-}
-
-.glass-input {
-  @apply bg-white/50 backdrop-blur-sm border-[#138808]/20 focus:border-[#138808]/40 focus:bg-white/80;
+.dark .card-shadow-hover {
+  @apply hover:shadow-[0_10px_40px_-15px_rgba(255,153,51,0.3)];
 }
 
 /* Premium gradients */
 .premium-gradient-1 {
-  @apply bg-gradient-to-br from-[#f7f9ff] to-[#ebf4ff];
+  @apply bg-gradient-to-br from-[#f9fcff] to-[#f6fcfc];
+}
+
+.dark .premium-gradient-1 {
+  @apply from-slate-900 to-slate-800;
 }
 
 .premium-gradient-2 {
-  @apply bg-gradient-to-r from-[#f9fcff] via-[#f6fcfc] to-[#f0fff4];
+  @apply bg-gradient-to-r from-[#ffefc5] to-[#ffcab8];
 }
 
-.premium-gradient-3 {
-  @apply bg-gradient-to-tr from-[#ffefc5] to-[#ffcab8];
+.dark .premium-gradient-2 {
+  @apply from-[#472f1d] to-[#3d2f2d];
 }
 
 /* 3D elements */
@@ -283,20 +296,85 @@ h1, h2, h3, h4, h5, h6 {
   @apply rounded-xl border border-[#138808]/10 bg-gradient-to-br from-white to-[#f8fbff] shadow-[0_10px_30px_-15px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_35px_-15px_rgba(0,0,0,0.25)] transition-all duration-300;
 }
 
-/* Improved spacing and visual hierarchy */
-.section-content {
-  @apply max-w-6xl mx-auto py-12 px-6 space-y-12;
+.dark .premium-card {
+  @apply from-slate-900 to-slate-800 border-slate-700/30 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_15px_35px_-15px_rgba(0,0,0,0.7)];
 }
 
-/* New subtle animations */
-.hover-lift {
-  @apply transition-transform duration-200 hover:-translate-y-1;
+/* Floating elements animation */
+.float-element {
+  animation: float 3s ease-in-out infinite;
 }
 
-.hover-glow {
-  @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,153,51,0.4)];
+/* Subtle background patterns */
+.bg-pattern-dots {
+  background-image: radial-gradient(circle, #00008022 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-.hover-expand {
-  @apply transition-all duration-300 hover:scale-[1.02];
+.dark .bg-pattern-dots {
+  background-image: radial-gradient(circle, #ffffff11 1px, transparent 1px);
+}
+
+/* Loading animations */
+.loading-skeleton {
+  @apply bg-slate-200 dark:bg-slate-700 animate-shimmer;
+}
+
+/* Ripple effect */
+.ripple-effect {
+  @apply relative overflow-hidden;
+}
+
+.ripple-effect::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.ripple-effect:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* Tricolor theme specific gradients */
+.tricolor-gradient {
+  @apply bg-gradient-to-r from-[#FF9933] via-white to-[#138808];
+}
+
+/* Updated navigation styles */
+.nav-item {
+  @apply rounded-lg transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 p-2;
+}
+
+.nav-item-active {
+  @apply bg-[#138808]/15 text-[#000080] dark:bg-slate-800 dark:text-white font-semibold border-l-4 border-[#FF9933];
+}
+
+/* Z-index utility classes */
+.z-nav {
+  z-index: 30;
+}
+
+.z-submenu {
+  z-index: 40;
+}
+
+.z-modal {
+  z-index: 50;
+}
+
+.z-tooltip {
+  z-index: 60;
 }
