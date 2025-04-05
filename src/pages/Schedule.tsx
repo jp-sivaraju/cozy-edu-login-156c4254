@@ -5,7 +5,7 @@ import { Calendar } from '@/components/ui/calendar';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Book, MapPin, Clock } from 'lucide-react';
+import { Book, MapPin, Clock, Calendar as CalendarIcon } from 'lucide-react';
 
 // Mock data for demonstration
 const WEEKLY_SCHEDULE = [
@@ -29,10 +29,46 @@ const WEEKLY_SCHEDULE = [
       { id: 10, name: 'Art', teacher: 'Mrs. Gupta', time: '11:30 - 12:15', room: 'Art Studio' },
     ]
   },
-  // Remaining days data...
+  {
+    day: 'Wednesday',
+    classes: [
+      { id: 11, name: 'English', teacher: 'Mrs. Gupta', time: '09:00 - 09:45', room: 'Room 103' },
+      { id: 12, name: 'Social Studies', teacher: 'Mr. Singh', time: '09:45 - 10:30', room: 'Room 105' },
+      { id: 13, name: 'Break', time: '10:30 - 10:45' },
+      { id: 14, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
+      { id: 15, name: 'Computer Science', teacher: 'Mr. Verma', time: '11:30 - 12:15', room: 'Computer Lab' },
+    ]
+  },
+  {
+    day: 'Thursday',
+    classes: [
+      { id: 16, name: 'Science', teacher: 'Mr. Patel', time: '09:00 - 09:45', room: 'Lab 2' },
+      { id: 17, name: 'Hindi', teacher: 'Mrs. Mishra', time: '09:45 - 10:30', room: 'Room 104' },
+      { id: 18, name: 'Break', time: '10:30 - 10:45' },
+      { id: 19, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
+      { id: 20, name: 'English', teacher: 'Mrs. Gupta', time: '11:30 - 12:15', room: 'Room 103' },
+    ]
+  },
+  {
+    day: 'Friday',
+    classes: [
+      { id: 21, name: 'Geography', teacher: 'Mr. Singh', time: '09:00 - 09:45', room: 'Room 105' },
+      { id: 22, name: 'Science', teacher: 'Mr. Patel', time: '09:45 - 10:30', room: 'Lab 2' },
+      { id: 23, name: 'Break', time: '10:30 - 10:45' },
+      { id: 24, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
+      { id: 25, name: 'Music', teacher: 'Mr. Sharma', time: '11:30 - 12:15', room: 'Music Room' },
+    ]
+  },
 ];
 
 // Mock calendar events
+interface CalendarEvent {
+  id: number;
+  name: string;
+  time: string;
+  teacher: string;
+}
+
 const CALENDAR_EVENTS: Record<string, CalendarEvent[]> = {
   "2025-04-04": [
     { id: 1, name: "Mathematics Test", time: "09:00 - 10:00", teacher: "Mrs. Sharma" },
@@ -49,14 +85,6 @@ const CALENDAR_EVENTS: Record<string, CalendarEvent[]> = {
   ]
 };
 
-// Define interface for event types
-interface CalendarEvent {
-  id: number;
-  name: string;
-  time: string;
-  teacher: string;
-}
-
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState("weekly");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -70,7 +98,7 @@ const Schedule = () => {
     if (!date) return [];
     
     const dateStr = date.toISOString().split('T')[0];
-    return CALENDAR_EVENTS[dateStr as keyof typeof CALENDAR_EVENTS] || [];
+    return CALENDAR_EVENTS[dateStr] || [];
   };
   
   const renderWeeklyView = () => (
@@ -123,7 +151,7 @@ const Schedule = () => {
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              className="rounded-md border border-[#138808]/20"
+              className="rounded-md border border-[#138808]/20 pointer-events-auto"
               modifiers={{
                 booked: Object.keys(CALENDAR_EVENTS).map(date => new Date(date)),
               }}
@@ -178,6 +206,62 @@ const Schedule = () => {
     </div>
   );
 
+  const renderWeeklyCalendarView = () => {
+    const currentDate = new Date();
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const periods = ['09:00 - 09:45', '09:45 - 10:30', '10:30 - 10:45', '10:45 - 11:30', '11:30 - 12:15'];
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="border border-[#138808]/30 p-2 bg-[#138808]/10 text-[#000080] text-left">Time</th>
+              {days.map((day) => (
+                <th key={day} className="border border-[#138808]/30 p-2 bg-[#138808]/10 text-[#000080] min-w-[150px]">
+                  {day}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {periods.map((period, idx) => (
+              <tr key={period} className={idx === 2 ? 'bg-[#138808]/5' : 'bg-white'}>
+                <td className="border border-[#138808]/30 p-2 font-medium">
+                  {period}
+                  {idx === 2 && <span className="block text-xs text-[#138808]">Break</span>}
+                </td>
+                {days.map((day, dayIdx) => {
+                  const classInfo = WEEKLY_SCHEDULE[dayIdx].classes[idx];
+                  
+                  return (
+                    <td key={`${day}-${period}`} className="border border-[#138808]/30 p-2">
+                      {idx !== 2 ? (
+                        <div>
+                          <div className="font-medium text-[#000080]">{classInfo.name}</div>
+                          {classInfo.teacher && (
+                            <div className="text-xs text-slate-600">{classInfo.teacher}</div>
+                          )}
+                          {classInfo.room && (
+                            <div className="text-xs text-slate-500 mt-1 flex items-center">
+                              <MapPin className="h-3 w-3 mr-1" /> {classInfo.room}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center text-[#138808] text-sm">Break Time</div>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="container p-6">
@@ -193,6 +277,12 @@ const Schedule = () => {
               Weekly Timetable
             </TabsTrigger>
             <TabsTrigger 
+              value="grid"
+              className={`flex-1 ${activeTab === "grid" ? "bg-[#FF9933] text-white" : ""}`}
+            >
+              Weekly Calendar
+            </TabsTrigger>
+            <TabsTrigger 
               value="calendar"
               className={`flex-1 ${activeTab === "calendar" ? "bg-[#FF9933] text-white" : ""}`}
             >
@@ -202,6 +292,20 @@ const Schedule = () => {
           
           <TabsContent value="weekly" className="mt-0">
             {renderWeeklyView()}
+          </TabsContent>
+          
+          <TabsContent value="grid" className="mt-0">
+            <Card className="border-[#138808]/20">
+              <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent">
+                <CardTitle className="text-xl text-[#000080] flex items-center">
+                  <CalendarIcon className="h-5 w-5 mr-2" />
+                  Weekly Calendar View
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {renderWeeklyCalendarView()}
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="calendar" className="mt-0">
