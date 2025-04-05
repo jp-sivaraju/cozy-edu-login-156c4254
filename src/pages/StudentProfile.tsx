@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,10 +9,9 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { BookOpen, Award, TrendingUp, Briefcase, BarChart2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts';
 
-// Mock API call for student details
 const fetchStudentProfile = async () => {
   await new Promise(resolve => setTimeout(resolve, 1200));
   
@@ -549,7 +547,7 @@ const StudentProfile = () => {
       </Card>
     );
   };
-  
+
   const renderCareerPredictions = () => {
     if (!data) return null;
     const { careerPredictions } = data;

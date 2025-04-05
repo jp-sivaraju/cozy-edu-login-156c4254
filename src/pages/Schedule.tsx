@@ -49,6 +49,14 @@ const CALENDAR_EVENTS = {
   ]
 };
 
+// Define interface for event types
+interface CalendarEvent {
+  id: number;
+  name: string;
+  time: string;
+  teacher?: string;
+}
+
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState("weekly");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -142,7 +150,7 @@ const Schedule = () => {
           <CardContent>
             {getEventsForDate(selectedDate).length > 0 ? (
               <div className="space-y-4">
-                {getEventsForDate(selectedDate).map((event) => (
+                {getEventsForDate(selectedDate).map((event: CalendarEvent) => (
                   <div key={event.id} className="p-4 border border-[#138808]/20 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start">
                       <h3 className="font-medium text-[#000080]">{event.name}</h3>

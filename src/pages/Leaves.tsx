@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,11 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar as CalendarIcon, Clock, Filter, Plus, Search, Calendar, Check, X, File, FileText } from 'lucide-react';
+import { CalendarIcon, Clock, Filter, Plus, Search, Check, X, File, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 
-// Mock data for demonstration
 const MOCK_LEAVES_DATA = {
   leaveTypes: [
     { id: 1, name: "Sick Leave", total: 12, availed: 4, remaining: 8 },
@@ -84,21 +82,19 @@ const Leaves = () => {
   const [filterEndDate, setFilterEndDate] = useState<Date | undefined>(undefined);
   const { toast } = useToast();
 
-  // Form state for new leave application
   const [leaveType, setLeaveType] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [reason, setReason] = useState("");
-  
+
   const { data, isLoading } = useQuery({
     queryKey: ['leavesData'],
     queryFn: async () => {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       return MOCK_LEAVES_DATA;
     }
   });
-  
+
   const handleSubmitLeaveRequest = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -111,7 +107,6 @@ const Leaves = () => {
       return;
     }
     
-    // Calculate days
     const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
@@ -120,13 +115,12 @@ const Leaves = () => {
       description: `Your ${leaveType} request for ${diffDays} day(s) has been submitted successfully.`
     });
     
-    // Reset form
     setLeaveType("");
     setStartDate(undefined);
     setEndDate(undefined);
     setReason("");
   };
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
@@ -134,7 +128,7 @@ const Leaves = () => {
       description: `Searching for "${searchQuery}" with selected filters`,
     });
   };
-  
+
   const handleClearFilters = () => {
     setSearchQuery("");
     setFilterStatus("all");
@@ -148,7 +142,7 @@ const Leaves = () => {
       description: "All search filters have been reset",
     });
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'approved':
@@ -161,7 +155,7 @@ const Leaves = () => {
         return 'bg-slate-100 text-slate-600 border-slate-200';
     }
   };
-  
+
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'approved':
@@ -174,7 +168,7 @@ const Leaves = () => {
         return null;
     }
   };
-  
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -501,7 +495,6 @@ const Leaves = () => {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">From Date</label>
                         <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2 text-slate-400" />
                           <Input 
                             type="date" 
                             className="border-[#138808]/30"
@@ -514,7 +507,6 @@ const Leaves = () => {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">To Date</label>
                         <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2 text-slate-400" />
                           <Input 
                             type="date" 
                             className="border-[#138808]/30"
