@@ -33,6 +33,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [showCelebration, setShowCelebration] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   
   useEffect(() => {
     // Show confetti celebration when dashboard loads
@@ -125,6 +126,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     );
   };
 
+  // Function to handle submenu toggle
+  const handleSubmenuToggle = (path: string) => {
+    setOpenSubmenu(prevPath => prevPath === path ? null : path);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       {/* Top navigation */}
@@ -145,8 +151,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         <span className="text-lg font-medium">{user?.name || 'User'}</span>
                       </div>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="absolute right-0 top-full min-w-[280px] z-50">
-                      <div className="p-4 bg-white shadow-lg rounded-lg border border-[#138808]/20">
+                    <NavigationMenuContent className="absolute right-0 top-full min-w-[280px] z-50 bg-white shadow-lg rounded-lg border border-[#138808]/20">
+                      <div className="p-4">
                         <div className="mb-4 pb-4 border-b border-[#138808]/20">
                           <p className="text-xl font-bold text-[#000080]">{user?.name}</p>
                           <p className="text-base text-slate-600">{user?.email}</p>
@@ -189,13 +195,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                                   ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
                                   : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
                               }`}
+                              onClick={() => handleSubmenuToggle(item.path)}
                             >
                               <span className="flex items-center">
                                 {item.icon}
                                 <span className="hidden md:inline ml-3 text-base">{item.label}</span>
                               </span>
                             </NavigationMenuTrigger>
-                            <NavigationMenuContent className="absolute left-full top-0 min-w-[200px] md:min-w-[250px] z-50">
+                            <NavigationMenuContent className="absolute left-full top-0 min-w-[200px] md:min-w-[250px] z-50 bg-white shadow-lg rounded-lg border border-[#138808]/20">
                               {renderSubmenu(item.submenu)}
                             </NavigationMenuContent>
                           </NavigationMenuItem>
