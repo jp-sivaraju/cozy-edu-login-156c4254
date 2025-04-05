@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -54,38 +53,41 @@ interface ModuleCardProps {
   completion?: number;
 }
 
+// Refactor the ChartData interface to be more flexible
 interface ChartData {
   name: string;
-  value: number;
   [key: string]: any;
 }
 
-// Sample data for charts
+// Financial data now conforms to ChartData
 const financialData: ChartData[] = [
-  { name: 'Apr', income: 320000, expenses: 240000, profit: 80000 },
-  { name: 'May', income: 380000, expenses: 260000, profit: 120000 },
-  { name: 'Jun', income: 450000, expenses: 290000, profit: 160000 },
-  { name: 'Jul', income: 420000, expenses: 270000, profit: 150000 },
-  { name: 'Aug', income: 520000, expenses: 320000, profit: 200000 },
-  { name: 'Sep', income: 590000, expenses: 350000, profit: 240000 },
+  { name: 'Apr', income: 320000, expenses: 240000, profit: 80000, value: 320000 },
+  { name: 'May', income: 380000, expenses: 260000, profit: 120000, value: 380000 },
+  { name: 'Jun', income: 450000, expenses: 290000, profit: 160000, value: 450000 },
+  { name: 'Jul', income: 420000, expenses: 270000, profit: 150000, value: 420000 },
+  { name: 'Aug', income: 520000, expenses: 320000, profit: 200000, value: 520000 },
+  { name: 'Sep', income: 590000, expenses: 350000, profit: 240000, value: 590000 },
 ];
 
+// Attendance data now conforms to ChartData
 const attendanceData: ChartData[] = [
-  { name: 'Mon', present: 92, absent: 8 },
-  { name: 'Tue', present: 95, absent: 5 },
-  { name: 'Wed', present: 90, absent: 10 },
-  { name: 'Thu', present: 93, absent: 7 },
-  { name: 'Fri', present: 96, absent: 4 },
+  { name: 'Mon', present: 92, absent: 8, value: 92 },
+  { name: 'Tue', present: 95, absent: 5, value: 95 },
+  { name: 'Wed', present: 90, absent: 10, value: 90 },
+  { name: 'Thu', present: 93, absent: 7, value: 93 },
+  { name: 'Fri', present: 96, absent: 4, value: 96 },
 ];
 
+// Grade trends data now conforms to ChartData
 const gradeTrends: ChartData[] = [
-  { name: 'Class 6', science: 78, math: 82, english: 75, social: 73 },
-  { name: 'Class 7', science: 75, math: 80, english: 77, social: 72 },
-  { name: 'Class 8', science: 82, math: 85, english: 80, social: 78 },
-  { name: 'Class 9', science: 80, math: 78, english: 82, social: 76 },
-  { name: 'Class 10', science: 85, math: 88, english: 83, social: 80 },
+  { name: 'Class 6', science: 78, math: 82, english: 75, social: 73, value: 78 },
+  { name: 'Class 7', science: 75, math: 80, english: 77, social: 72, value: 75 },
+  { name: 'Class 8', science: 82, math: 85, english: 80, social: 78, value: 82 },
+  { name: 'Class 9', science: 80, math: 78, english: 82, social: 76, value: 80 },
+  { name: 'Class 10', science: 85, math: 88, english: 83, social: 80, value: 85 },
 ];
 
+// No changes needed for feeCollectionData as it already has the value property
 const feeCollectionData: ChartData[] = [
   { name: 'Paid', value: 76 },
   { name: 'Pending', value: 18 },
@@ -547,14 +549,14 @@ const AdminDashboard = () => {
           {/* Modules Tab */}
           <TabsContent value="modules" className="space-y-8 animate-in fade-in duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Since we're displaying the actual module cards here, we'll need to duplicate this list for many more modules 
-                  but we'll keep it brief for this example */}
               {[...adminModules, 
                 { 
                   title: "Exam Management", 
                   description: "Manage exam schedules and results", 
                   icon: <FileCheck className="h-6 w-6 text-rose-700" />, 
                   path: "/admin/exams/schedule",
+                  isPriority: false,
+                  count: 0,
                   completion: 82
                 },
                 { 
@@ -562,6 +564,8 @@ const AdminDashboard = () => {
                   description: "Manage books and resources", 
                   icon: <Book className="h-6 w-6 text-teal-700" />, 
                   path: "/admin/library",
+                  isPriority: false,
+                  count: 0,
                   completion: 65
                 },
                 { 
@@ -569,6 +573,8 @@ const AdminDashboard = () => {
                   description: "View performance analytics", 
                   icon: <BarChart className="h-6 w-6 text-violet-700" />, 
                   path: "/admin/analytics",
+                  isPriority: false,
+                  count: 0,
                   completion: 70
                 },
               ].map((module, index) => (
