@@ -8,7 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { BookOpen, Award, TrendingUp, Briefcase } from 'lucide-react';
+import { BookOpen, Award, TrendingUp, Briefcase, BarChart2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/checkbox';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts';
 
 // Mock API call for student details
 const fetchStudentProfile = async () => {
@@ -36,28 +39,28 @@ const fetchStudentProfile = async () => {
     ],
     healthTrends: {
       height: [
-        { date: "2021-01", value: 145 },
-        { date: "2021-06", value: 148 },
-        { date: "2022-01", value: 152 },
-        { date: "2022-06", value: 156 },
-        { date: "2023-01", value: 160 },
-        { date: "2023-06", value: 164 }
+        { date: "2021-01", value: 145, classAvg: 143, branchAvg: 142, stateAvg: 141, countryAvg: 140 },
+        { date: "2021-06", value: 148, classAvg: 146, branchAvg: 145, stateAvg: 144, countryAvg: 143 },
+        { date: "2022-01", value: 152, classAvg: 150, branchAvg: 149, stateAvg: 148, countryAvg: 147 },
+        { date: "2022-06", value: 156, classAvg: 154, branchAvg: 153, stateAvg: 152, countryAvg: 151 },
+        { date: "2023-01", value: 160, classAvg: 157, branchAvg: 156, stateAvg: 155, countryAvg: 154 },
+        { date: "2023-06", value: 164, classAvg: 161, branchAvg: 160, stateAvg: 159, countryAvg: 158 }
       ],
       weight: [
-        { date: "2021-01", value: 38 },
-        { date: "2021-06", value: 40 },
-        { date: "2022-01", value: 43 },
-        { date: "2022-06", value: 45 },
-        { date: "2023-01", value: 48 },
-        { date: "2023-06", value: 50 }
+        { date: "2021-01", value: 38, classAvg: 36, branchAvg: 35, stateAvg: 35, countryAvg: 34 },
+        { date: "2021-06", value: 40, classAvg: 38, branchAvg: 37, stateAvg: 37, countryAvg: 36 },
+        { date: "2022-01", value: 43, classAvg: 41, branchAvg: 40, stateAvg: 40, countryAvg: 39 },
+        { date: "2022-06", value: 45, classAvg: 43, branchAvg: 42, stateAvg: 42, countryAvg: 41 },
+        { date: "2023-01", value: 48, classAvg: 46, branchAvg: 45, stateAvg: 44, countryAvg: 43 },
+        { date: "2023-06", value: 50, classAvg: 48, branchAvg: 47, stateAvg: 46, countryAvg: 45 }
       ],
       bmi: [
-        { date: "2021-01", value: 18.1 },
-        { date: "2021-06", value: 18.3 },
-        { date: "2022-01", value: 18.6 },
-        { date: "2022-06", value: 18.5 },
-        { date: "2023-01", value: 18.8 },
-        { date: "2023-06", value: 18.6 }
+        { date: "2021-01", value: 18.1, classAvg: 17.8, branchAvg: 17.6, stateAvg: 17.5, countryAvg: 17.4 },
+        { date: "2021-06", value: 18.3, classAvg: 18.0, branchAvg: 17.8, stateAvg: 17.7, countryAvg: 17.6 },
+        { date: "2022-01", value: 18.6, classAvg: 18.2, branchAvg: 18.0, stateAvg: 17.9, countryAvg: 17.8 },
+        { date: "2022-06", value: 18.5, classAvg: 18.1, branchAvg: 17.9, stateAvg: 17.8, countryAvg: 17.7 },
+        { date: "2023-01", value: 18.8, classAvg: 18.4, branchAvg: 18.2, stateAvg: 18.0, countryAvg: 17.9 },
+        { date: "2023-06", value: 18.6, classAvg: 18.2, branchAvg: 18.0, stateAvg: 17.9, countryAvg: 17.8 }
       ]
     },
     careerPredictions: {
@@ -85,6 +88,10 @@ const fetchStudentProfile = async () => {
 
 const StudentProfile = () => {
   const [activeTab, setActiveTab] = useState("details");
+  const [showClassAvg, setShowClassAvg] = useState(true);
+  const [showBranchAvg, setShowBranchAvg] = useState(false);
+  const [showStateAvg, setShowStateAvg] = useState(false);
+  const [showCountryAvg, setShowCountryAvg] = useState(false);
   const { user } = useAuth();
 
   const { data, isLoading, error } = useQuery({
@@ -223,6 +230,57 @@ const StudentProfile = () => {
     if (!data) return null;
     const { healthTrends } = data;
     
+    const formatDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    };
+    
+    const toggleButtons = (
+      <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg border border-[#138808]/20">
+        <span className="text-sm font-medium mr-2 my-auto text-slate-600">Compare with:</span>
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="classAvg" 
+            checked={showClassAvg} 
+            onChange={() => setShowClassAvg(!showClassAvg)}
+            className="w-4 h-4 text-[#000080] bg-gray-100 border-[#138808] rounded"
+          />
+          <label htmlFor="classAvg" className="text-sm text-[#000080]">Class Avg</label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="branchAvg" 
+            checked={showBranchAvg} 
+            onChange={() => setShowBranchAvg(!showBranchAvg)}
+            className="w-4 h-4 text-[#FF9933] bg-gray-100 border-[#138808] rounded"
+          />
+          <label htmlFor="branchAvg" className="text-sm text-[#FF9933]">Branch Avg</label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="stateAvg" 
+            checked={showStateAvg} 
+            onChange={() => setShowStateAvg(!showStateAvg)}
+            className="w-4 h-4 text-[#138808] bg-gray-100 border-[#138808] rounded"
+          />
+          <label htmlFor="stateAvg" className="text-sm text-[#138808]">State Avg</label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="countryAvg" 
+            checked={showCountryAvg} 
+            onChange={() => setShowCountryAvg(!showCountryAvg)}
+            className="w-4 h-4 text-purple-600 bg-gray-100 border-[#138808] rounded"
+          />
+          <label htmlFor="countryAvg" className="text-sm text-purple-600">Country Avg</label>
+        </div>
+      </div>
+    );
+    
     return (
       <Card className="border-[#138808]/30">
         <CardHeader className="bg-[#FF9933]/10 border-b border-[#138808]/20">
@@ -231,81 +289,261 @@ const StudentProfile = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="space-y-6">
+          {toggleButtons}
+          
+          <div className="space-y-12">
             <div>
-              <div className="flex justify-between mb-2">
-                <p className="font-medium">Height (cm)</p>
-                <p className="text-[#138808] font-semibold">
-                  {healthTrends.height[healthTrends.height.length - 1].value} cm
-                </p>
-              </div>
-              <div className="h-8 bg-[#138808]/10 rounded-full w-full overflow-hidden">
-                {healthTrends.height.map((entry, index) => (
-                  <div 
-                    key={index}
-                    className="h-full bg-gradient-to-r from-[#138808]/60 to-[#138808] rounded-full relative"
-                    style={{ 
-                      width: `${(index + 1) * (100 / healthTrends.height.length)}%`,
-                      transition: 'width 1s ease-in-out'
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
-                <span>{new Date(healthTrends.height[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                <span>{new Date(healthTrends.height[healthTrends.height.length - 1].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              <h3 className="font-medium mb-3 text-[#000080] flex items-center">
+                <TrendingUp className="h-4 w-4 mr-2" /> 
+                Height (cm) - Current: {healthTrends.height[healthTrends.height.length - 1].value} cm
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={healthTrends.height.map(item => ({
+                    ...item,
+                    formattedDate: formatDate(item.date)
+                  }))}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#00008020" />
+                    <XAxis dataKey="formattedDate" stroke="#000080" />
+                    <YAxis stroke="#000080" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #13880830',
+                        borderRadius: '8px'
+                      }} 
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="value" 
+                      name="Student"
+                      stroke="#000080" 
+                      strokeWidth={3}
+                      dot={{ r: 6, fill: '#000080', strokeWidth: 1, stroke: '#fff' }}
+                      activeDot={{ r: 8 }}
+                    />
+                    {showClassAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="classAvg" 
+                        name="Class Avg" 
+                        stroke="#000080" 
+                        strokeDasharray="5 5"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#000080', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showBranchAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="branchAvg" 
+                        name="Branch Avg" 
+                        stroke="#FF9933" 
+                        strokeDasharray="3 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#FF9933', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showStateAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="stateAvg" 
+                        name="State Avg" 
+                        stroke="#138808" 
+                        strokeDasharray="5 2"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#138808', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showCountryAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="countryAvg" 
+                        name="Country Avg" 
+                        stroke="#9333ea" 
+                        strokeDasharray="3 1 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#9333ea', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
             
             <div>
-              <div className="flex justify-between mb-2">
-                <p className="font-medium">Weight (kg)</p>
-                <p className="text-[#000080] font-semibold">
-                  {healthTrends.weight[healthTrends.weight.length - 1].value} kg
-                </p>
-              </div>
-              <div className="h-8 bg-[#000080]/10 rounded-full w-full overflow-hidden">
-                {healthTrends.weight.map((entry, index) => (
-                  <div 
-                    key={index}
-                    className="h-full bg-gradient-to-r from-[#000080]/60 to-[#000080] rounded-full"
-                    style={{ 
-                      width: `${(index + 1) * (100 / healthTrends.weight.length)}%`,
-                      transition: 'width 1s ease-in-out'
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
-                <span>{new Date(healthTrends.weight[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                <span>{new Date(healthTrends.weight[healthTrends.weight.length - 1].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              <h3 className="font-medium mb-3 text-[#000080] flex items-center">
+                <TrendingUp className="h-4 w-4 mr-2" /> 
+                Weight (kg) - Current: {healthTrends.weight[healthTrends.weight.length - 1].value} kg
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={healthTrends.weight.map(item => ({
+                    ...item,
+                    formattedDate: formatDate(item.date)
+                  }))}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#00008020" />
+                    <XAxis dataKey="formattedDate" stroke="#000080" />
+                    <YAxis stroke="#000080" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #13880830',
+                        borderRadius: '8px'
+                      }} 
+                    />
+                    <Legend />
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      name="Student"
+                      stroke="#FF9933" 
+                      strokeWidth={3}
+                      fill="#FF993330"
+                      dot={{ r: 6, fill: '#FF9933', strokeWidth: 1, stroke: '#fff' }}
+                      activeDot={{ r: 8 }}
+                    />
+                    {showClassAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="classAvg" 
+                        name="Class Avg" 
+                        stroke="#000080" 
+                        strokeDasharray="5 5"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#000080', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showBranchAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="branchAvg" 
+                        name="Branch Avg" 
+                        stroke="#FF9933" 
+                        strokeDasharray="3 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#FF9933', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showStateAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="stateAvg" 
+                        name="State Avg" 
+                        stroke="#138808" 
+                        strokeDasharray="5 2"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#138808', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showCountryAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="countryAvg" 
+                        name="Country Avg" 
+                        stroke="#9333ea" 
+                        strokeDasharray="3 1 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#9333ea', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </div>
             
             <div>
-              <div className="flex justify-between mb-2">
-                <p className="font-medium">BMI</p>
-                <p className="text-[#FF9933] font-semibold">
-                  {healthTrends.bmi[healthTrends.bmi.length - 1].value}
-                </p>
-              </div>
-              <div className="h-8 bg-[#FF9933]/10 rounded-full w-full overflow-hidden">
-                {healthTrends.bmi.map((entry, index) => (
-                  <div 
-                    key={index}
-                    className="h-full bg-gradient-to-r from-[#FF9933]/60 to-[#FF9933] rounded-full"
-                    style={{ 
-                      width: `${(index + 1) * (100 / healthTrends.bmi.length)}%`,
-                      transition: 'width 1s ease-in-out'
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
-                <span>{new Date(healthTrends.bmi[0].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                <span>{new Date(healthTrends.bmi[healthTrends.bmi.length - 1].date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              <h3 className="font-medium mb-3 text-[#000080] flex items-center">
+                <TrendingUp className="h-4 w-4 mr-2" /> 
+                BMI - Current: {healthTrends.bmi[healthTrends.bmi.length - 1].value}
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={healthTrends.bmi.map(item => ({
+                    ...item,
+                    formattedDate: formatDate(item.date)
+                  }))}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#00008020" />
+                    <XAxis dataKey="formattedDate" stroke="#000080" />
+                    <YAxis stroke="#000080" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #13880830',
+                        borderRadius: '8px'
+                      }} 
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="value" 
+                      name="Student"
+                      stroke="#138808" 
+                      strokeWidth={3}
+                      dot={{ r: 6, fill: '#138808', strokeWidth: 1, stroke: '#fff' }}
+                      activeDot={{ r: 8 }}
+                    />
+                    <ReferenceLine y={18.5} label="Healthy" stroke="#138808" strokeDasharray="3 3" />
+                    <ReferenceLine y={25} label="Overweight" stroke="#FF9933" strokeDasharray="3 3" />
+                    {showClassAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="classAvg" 
+                        name="Class Avg" 
+                        stroke="#000080" 
+                        strokeDasharray="5 5"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#000080', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showBranchAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="branchAvg" 
+                        name="Branch Avg" 
+                        stroke="#FF9933" 
+                        strokeDasharray="3 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#FF9933', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showStateAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="stateAvg" 
+                        name="State Avg" 
+                        stroke="#138808" 
+                        strokeDasharray="5 2"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#138808', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                    {showCountryAvg && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="countryAvg" 
+                        name="Country Avg" 
+                        stroke="#9333ea" 
+                        strokeDasharray="3 1 3"
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: '#9333ea', strokeWidth: 1, stroke: '#fff' }}
+                      />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
+          </div>
+          
+          <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-[#138808]/20">
+            <p className="text-sm text-slate-600">
+              <span className="font-medium">Note:</span> Health metrics are measured twice a year during 
+              routine health check-ups. Comparisons help identify growth patterns relative to peers.
+            </p>
           </div>
         </CardContent>
       </Card>

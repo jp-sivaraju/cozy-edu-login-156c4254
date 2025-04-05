@@ -1,231 +1,204 @@
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Calendar } from '@/components/ui/calendar';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { useAuth } from '@/contexts/AuthContext';
-import { Clock, Calendar as CalendarIcon, MapPin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Book, MapPin, Clock } from 'lucide-react';
 
-// Mock API call for the timetable
-const fetchTimetable = async () => {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return {
-    weekly: [
-      {
-        day: "Monday",
-        periods: [
-          { time: "09:00 - 09:45", subject: "Mathematics", teacher: "Mrs. Sharma", room: "Room 101" },
-          { time: "09:45 - 10:30", subject: "Science", teacher: "Mr. Patel", room: "Lab 2" },
-          { time: "10:30 - 10:45", subject: "Break", teacher: "", room: "" },
-          { time: "10:45 - 11:30", subject: "English", teacher: "Mrs. Gupta", room: "Room 103" },
-          { time: "11:30 - 12:15", subject: "Hindi", teacher: "Mr. Singh", room: "Room 105" },
-          { time: "12:15 - 13:00", subject: "Lunch", teacher: "", room: "Cafeteria" },
-          { time: "13:00 - 13:45", subject: "Social Studies", teacher: "Mrs. Das", room: "Room 107" },
-          { time: "13:45 - 14:30", subject: "Physical Education", teacher: "Mr. Kumar", room: "Playground" }
-        ]
-      },
-      {
-        day: "Tuesday",
-        periods: [
-          { time: "09:00 - 09:45", subject: "Science", teacher: "Mr. Patel", room: "Lab 2" },
-          { time: "09:45 - 10:30", subject: "Mathematics", teacher: "Mrs. Sharma", room: "Room 101" },
-          { time: "10:30 - 10:45", subject: "Break", teacher: "", room: "" },
-          { time: "10:45 - 11:30", subject: "Hindi", teacher: "Mr. Singh", room: "Room 105" },
-          { time: "11:30 - 12:15", subject: "English", teacher: "Mrs. Gupta", room: "Room 103" },
-          { time: "12:15 - 13:00", subject: "Lunch", teacher: "", room: "Cafeteria" },
-          { time: "13:00 - 13:45", subject: "Art", teacher: "Mrs. Reddy", room: "Art Studio" },
-          { time: "13:45 - 14:30", subject: "Computer Science", teacher: "Mr. Verma", room: "Computer Lab" }
-        ]
-      },
-      // Additional days would follow the same pattern
-    ],
-    today: {
-      day: "Monday",
-      currentPeriod: { time: "09:45 - 10:30", subject: "Science", teacher: "Mr. Patel", room: "Lab 2" },
-      nextPeriod: { time: "10:45 - 11:30", subject: "English", teacher: "Mrs. Gupta", room: "Room 103" }
-    }
-  };
+// Mock data for demonstration
+const WEEKLY_SCHEDULE = [
+  {
+    day: 'Monday',
+    classes: [
+      { id: 1, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '09:00 - 09:45', room: 'Room 101' },
+      { id: 2, name: 'Science', teacher: 'Mr. Patel', time: '09:45 - 10:30', room: 'Lab 2' },
+      { id: 3, name: 'Break', time: '10:30 - 10:45' },
+      { id: 4, name: 'English', teacher: 'Mrs. Gupta', time: '10:45 - 11:30', room: 'Room 103' },
+      { id: 5, name: 'History', teacher: 'Mr. Singh', time: '11:30 - 12:15', room: 'Room 105' },
+    ]
+  },
+  {
+    day: 'Tuesday',
+    classes: [
+      { id: 6, name: 'Science', teacher: 'Mr. Patel', time: '09:00 - 09:45', room: 'Lab 2' },
+      { id: 7, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '09:45 - 10:30', room: 'Room 101' },
+      { id: 8, name: 'Break', time: '10:30 - 10:45' },
+      { id: 9, name: 'Physical Education', teacher: 'Mr. Kumar', time: '10:45 - 11:30', room: 'Playground' },
+      { id: 10, name: 'Art', teacher: 'Mrs. Gupta', time: '11:30 - 12:15', room: 'Art Studio' },
+    ]
+  },
+  // Remaining days data...
+];
+
+// Mock calendar events
+const CALENDAR_EVENTS = {
+  "2025-04-04": [
+    { id: 1, name: "Mathematics Test", time: "09:00 - 10:00", teacher: "Mrs. Sharma" },
+    { id: 2, name: "Science Project Due", time: "14:00", teacher: "Mr. Patel" }
+  ],
+  "2025-04-05": [
+    { id: 3, name: "Field Trip", time: "09:00 - 15:00", teacher: "Mr. Kumar" }
+  ],
+  "2025-04-08": [
+    { id: 4, name: "Parent-Teacher Meeting", time: "16:00 - 18:00" }
+  ],
+  "2025-04-15": [
+    { id: 5, name: "Annual Sports Day", time: "09:00 - 16:00" }
+  ]
 };
 
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState("weekly");
-  const { user } = useAuth();
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['timetable'],
-    queryFn: fetchTimetable,
-  });
-
-  const renderWeeklyTimetable = () => {
-    if (!data) return null;
-
-    return (
-      <div className="space-y-6">
-        {data.weekly.map((day, index) => (
-          <Card key={index} className="border-[#138808]/30 overflow-hidden rounded-xl shadow-md">
-            <CardHeader className="bg-[#FF9933]/10 border-b border-[#138808]/20">
-              <CardTitle className="text-[#000080] text-xl font-bold">{day.day}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-[#138808]/10">
-                {day.periods.map((period, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center ${
-                      period.subject === "Break" || period.subject === "Lunch" 
-                        ? "bg-[#138808]/5"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center w-full">
-                      <span className="text-sm sm:text-base text-[#000080] font-medium w-36 mb-1 sm:mb-0">
-                        {period.time}
-                      </span>
-                      <div className="flex-1">
-                        <p className="text-lg font-semibold text-[#000080]">
-                          {period.subject}
-                        </p>
-                        {period.teacher && (
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
-                            <p className="text-sm text-slate-500">
-                              {period.teacher}
-                            </p>
-                            {period.room && (
-                              <p className="text-sm flex items-center text-[#138808]">
-                                <MapPin className="inline mr-1 h-3 w-3" />
-                                {period.room}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  
+  const formatDate = (date: Date | undefined) => {
+    if (!date) return "";
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
-
-  const renderTodayTimetable = () => {
-    if (!data) return null;
+  
+  const getEventsForDate = (date: Date | undefined) => {
+    if (!date) return [];
     
-    return (
-      <div className="space-y-6">
-        <Card className="border-[#138808]/30 rounded-xl shadow-md">
-          <CardHeader className="bg-[#FF9933]/10 border-b border-[#138808]/20">
-            <CardTitle className="text-[#000080] text-xl font-bold">Today's Schedule</CardTitle>
+    const dateStr = date.toISOString().split('T')[0];
+    return CALENDAR_EVENTS[dateStr as keyof typeof CALENDAR_EVENTS] || [];
+  };
+  
+  const renderWeeklyView = () => (
+    <div className="space-y-6">
+      {WEEKLY_SCHEDULE.map((day) => (
+        <Card key={day.day} className="border-[#138808]/20 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent pb-2">
+            <CardTitle className="text-xl text-[#000080]">{day.day}</CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <CalendarIcon className="mr-2 h-5 w-5 text-[#FF9933]" />
-                <span className="text-lg font-medium text-[#000080]">{data.today.day}</span>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="border border-[#138808]/30 rounded-xl p-4 sm:p-6 bg-[#000080]/5">
-                <p className="text-sm text-[#000080] font-medium mb-2">CURRENT PERIOD</p>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <CardContent className="p-0">
+            {day.classes.map((cls) => (
+              <div 
+                key={cls.id} 
+                className={`p-4 border-b border-[#138808]/10 hover:bg-slate-50 transition-colors
+                  ${cls.name === 'Break' ? 'bg-[#138808]/5' : ''}`}
+              >
+                <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xl font-semibold text-[#000080]">{data.today.currentPeriod.subject}</p>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-                      <p className="text-sm text-slate-500">{data.today.currentPeriod.teacher}</p>
-                      {data.today.currentPeriod.room && (
-                        <p className="text-sm flex items-center text-[#138808]">
-                          <MapPin className="inline mr-1 h-3 w-3" />
-                          {data.today.currentPeriod.room}
-                        </p>
-                      )}
-                    </div>
+                    <h3 className="font-medium text-[#000080]">{cls.name}</h3>
+                    {cls.teacher && <p className="text-sm text-slate-600">- {cls.teacher}</p>}
                   </div>
-                  <div className="flex items-center text-[#000080] mt-2 sm:mt-0">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <span className="text-base">{data.today.currentPeriod.time}</span>
-                  </div>
+                  <Badge 
+                    className={`${cls.name === 'Break' ? 'bg-[#138808]/80' : 'bg-[#FF9933]'}`}
+                  >
+                    {cls.time}
+                  </Badge>
                 </div>
-              </div>
-              
-              <div className="border border-[#FF9933]/30 rounded-xl p-4 sm:p-6 bg-[#FF9933]/5">
-                <p className="text-sm text-[#FF9933] font-medium mb-2">NEXT PERIOD</p>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div>
-                    <p className="text-xl font-semibold text-[#000080]">{data.today.nextPeriod.subject}</p>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-                      <p className="text-sm text-slate-500">{data.today.nextPeriod.teacher}</p>
-                      {data.today.nextPeriod.room && (
-                        <p className="text-sm flex items-center text-[#138808]">
-                          <MapPin className="inline mr-1 h-3 w-3" />
-                          {data.today.nextPeriod.room}
-                        </p>
-                      )}
-                    </div>
+                {cls.room && (
+                  <div className="mt-2 text-xs text-slate-500 flex items-center">
+                    <MapPin className="h-3 w-3 mr-1" /> {cls.room}
                   </div>
-                  <div className="flex items-center text-[#FF9933] mt-2 sm:mt-0">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <span className="text-base">{data.today.nextPeriod.time}</span>
-                  </div>
-                </div>
+                )}
               </div>
-            </div>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderCalendarView = () => (
+    <div className="grid grid-cols-1 md:grid-cols-7 gap-6">
+      <div className="md:col-span-3">
+        <Card className="border-[#138808]/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-[#000080]">Select Date</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="rounded-md border border-[#138808]/20"
+              modifiers={{
+                booked: Object.keys(CALENDAR_EVENTS).map(date => new Date(date)),
+              }}
+              modifiersStyles={{
+                booked: { 
+                  fontWeight: 'bold',
+                  backgroundColor: 'rgba(255, 153, 51, 0.15)',
+                  color: '#000080',
+                  border: '1px solid rgba(255, 153, 51, 0.3)'
+                }
+              }}
+            />
           </CardContent>
         </Card>
       </div>
-    );
-  };
+      
+      <div className="md:col-span-4">
+        <Card className="border-[#138808]/20 h-full">
+          <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent pb-2">
+            <CardTitle className="text-lg text-[#000080]">
+              Events for {formatDate(selectedDate)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {getEventsForDate(selectedDate).length > 0 ? (
+              <div className="space-y-4">
+                {getEventsForDate(selectedDate).map((event) => (
+                  <div key={event.id} className="p-4 border border-[#138808]/20 rounded-lg hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-medium text-[#000080]">{event.name}</h3>
+                      <Badge className="bg-[#FF9933]">
+                        <Clock className="h-3 w-3 mr-1" /> {event.time}
+                      </Badge>
+                    </div>
+                    {event.teacher && (
+                      <p className="text-sm text-slate-600 mt-2">
+                        <Book className="h-3 w-3 inline mr-1" /> {event.teacher}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-48 text-center">
+                <Clock className="h-10 w-10 text-[#138808]/40 mb-2" />
+                <p className="text-slate-500">No events scheduled for this date</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 
   return (
     <DashboardLayout>
-      <div className="container p-4 sm:p-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#FF9933] mb-2">Class Schedule</h1>
-        <p className="text-slate-500 mb-6">
-          View class timetable and daily schedule
-        </p>
+      <div className="container p-6">
+        <h1 className="text-3xl font-bold text-[#FF9933] mb-2">Class Schedule</h1>
+        <p className="text-slate-600 mb-6">View class timetable and daily schedule</p>
         
-        <Tabs defaultValue="weekly" onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 bg-slate-100 rounded-xl overflow-hidden">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-6 bg-slate-100">
             <TabsTrigger 
               value="weekly"
-              className={`flex-1 py-2.5 text-base ${activeTab === "weekly" ? "bg-[#FF9933] text-white" : "text-[#000080]"}`}
+              className={`flex-1 ${activeTab === "weekly" ? "bg-[#FF9933] text-white" : ""}`}
             >
               Weekly Timetable
             </TabsTrigger>
             <TabsTrigger 
-              value="today"
-              className={`flex-1 py-2.5 text-base ${activeTab === "today" ? "bg-[#FF9933] text-white" : "text-[#000080]"}`}
+              value="calendar"
+              className={`flex-1 ${activeTab === "calendar" ? "bg-[#FF9933] text-white" : ""}`}
             >
-              Today
+              Calendar View
             </TabsTrigger>
           </TabsList>
           
-          {isLoading ? (
-            <div className="flex justify-center py-12">
-              <div className="h-10 w-10 border-4 border-t-[#FF9933] border-[#138808]/20 rounded-full animate-spin"></div>
-            </div>
-          ) : error ? (
-            <Alert variant="destructive" className="rounded-xl">
-              <AlertDescription className="text-base">
-                Failed to load timetable data. Please try again later.
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <>
-              <TabsContent value="weekly" className="mt-0">
-                {renderWeeklyTimetable()}
-              </TabsContent>
-              
-              <TabsContent value="today" className="mt-0">
-                {renderTodayTimetable()}
-              </TabsContent>
-            </>
-          )}
+          <TabsContent value="weekly" className="mt-0">
+            {renderWeeklyView()}
+          </TabsContent>
+          
+          <TabsContent value="calendar" className="mt-0">
+            {renderCalendarView()}
+          </TabsContent>
         </Tabs>
       </div>
     </DashboardLayout>

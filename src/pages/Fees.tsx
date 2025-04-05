@@ -4,10 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, CheckCircle, Clock, CreditCard, FileText, History, Home, IndianRupee, Receipt, CreditCard as CreditCardIcon } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, CreditCard, FileText, History, IndianRupee, Receipt, CreditCard as CreditCardIcon } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Link } from 'react-router-dom';
 
 // Mock data for demonstration
 const MOCK_FEES_DATA = {
@@ -29,6 +28,13 @@ const MOCK_FEES_DATA = {
   concessions: [
     { id: 1, type: "Sibling Discount", percentage: 10, amount: 1250, status: "Applied" },
     { id: 2, type: "Early Payment", percentage: 5, amount: 625, status: "Eligible" }
+  ],
+  feeStructure: [
+    { grade: "Nursery to KG", tuition: 8000, development: 1200, activity: 800, total: 10000 },
+    { grade: "Grades 1-5", tuition: 10000, development: 1500, activity: 1000, total: 12500 },
+    { grade: "Grades 6-8", tuition: 12000, development: 1800, activity: 1200, total: 15000 },
+    { grade: "Grades 9-10", tuition: 15000, development: 2000, activity: 1500, total: 18500 },
+    { grade: "Grades 11-12", tuition: 18000, development: 2500, activity: 2000, total: 22500 }
   ]
 };
 
@@ -93,238 +99,227 @@ const Fees = () => {
     });
   };
 
-  // Sidebar navigation items specific to Fees section
-  const feesNavItems = [
-    { title: "Overview", icon: <Home className="h-5 w-5" />, path: "#overview" },
-    { title: "Pay Now", icon: <CreditCardIcon className="h-5 w-5" />, path: "#pay-now" },
-    { title: "Payment History", icon: <History className="h-5 w-5" />, path: "#history" },
-    { title: "Concessions", icon: <Receipt className="h-5 w-5" />, path: "#concessions" },
-    { title: "Fee Structure", icon: <IndianRupee className="h-5 w-5" />, path: "#structure" },
-  ];
-
   return (
     <DashboardLayout>
-      <div className="flex">
-        {/* Fees Sidebar */}
-        <div className="w-64 bg-white/90 backdrop-blur-md border-r border-[#138808]/10 h-[calc(100vh-4rem)] sticky top-16 overflow-auto hidden md:block">
-          <div className="p-4 border-b border-[#138808]/10">
-            <h2 className="text-lg font-bold text-[#FF9933]">Fees Management</h2>
-            <p className="text-sm text-[#000080]/80">Manage all your payments</p>
-          </div>
-          <nav className="p-2">
-            <ul className="space-y-1">
-              {feesNavItems.map((item, index) => (
-                <li key={index}>
-                  <Link 
-                    to={item.path} 
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#000080] hover:bg-[#138808]/5 transition-all"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if(item.title.toLowerCase() === "pay now") setActiveTab("pay-now");
-                      else if(item.title.toLowerCase() === "payment history") setActiveTab("history");
-                      else if(item.title.toLowerCase() === "concessions") setActiveTab("concessions");
-                    }}
-                  >
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+      <div className="container p-6">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold mb-2 text-[#FF9933]">Fees & Payments</h1>
+          <p className="text-[#000080] mb-8 text-lg">Manage your school fee payments</p>
           
-          {/* Fee Summary */}
-          <div className="p-4 mt-6">
-            <Card className="bg-gradient-to-br from-white to-[#F9F9F9] border-[#FF9933]/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base text-[#000080]">Current Due</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-[#FF9933]">{formatCurrency(MOCK_FEES_DATA.currentDue.amount)}</div>
-                <div className="text-xs text-[#000080]/70 mt-1">Due by {formatDate(MOCK_FEES_DATA.currentDue.dueDate)}</div>
-                <Button 
-                  variant="tricolor" 
-                  size="sm" 
-                  className="w-full mt-4"
-                  onClick={() => setActiveTab("pay-now")}
-                >
-                  Pay Now
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        
-        {/* Main Content */}
-        <div className="flex-1 p-4 md:p-8">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2 text-[#FF9933]">Fees & Payments</h1>
-            <p className="text-[#000080] mb-8 text-lg">Manage your school fee payments</p>
-            
-            {isDueSoon && (
-              <div className="mb-6 p-4 bg-[#FF9933]/10 rounded-lg flex items-start gap-3 border border-[#FF9933]/20">
-                <AlertTriangle className="text-[#FF9933] h-6 w-6 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-[#FF9933]">Payment Due Soon</h3>
-                  <p className="text-[#000080]/80">
-                    Your fee payment for {MOCK_FEES_DATA.currentDue.term} is due on {formatDate(MOCK_FEES_DATA.currentDue.dueDate)}. Please make the payment to avoid late fees.
-                  </p>
-                </div>
+          {isDueSoon && (
+            <div className="mb-6 p-4 bg-[#FF9933]/10 rounded-lg flex items-start gap-3 border border-[#FF9933]/20">
+              <AlertTriangle className="text-[#FF9933] h-6 w-6 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-[#FF9933]">Payment Due Soon</h3>
+                <p className="text-[#000080]/80">
+                  Your fee payment for {MOCK_FEES_DATA.currentDue.term} is due on {formatDate(MOCK_FEES_DATA.currentDue.dueDate)}. Please make the payment to avoid late fees.
+                </p>
               </div>
-            )}
+            </div>
+          )}
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-4 mb-8">
+              <TabsTrigger value="pay-now" className="data-[state=active]:bg-[#FF9933] data-[state=active]:text-white">
+                <CreditCard className="h-4 w-4 mr-2" /> 
+                Pay Now
+              </TabsTrigger>
+              <TabsTrigger value="history" className="data-[state=active]:bg-[#000080] data-[state=active]:text-white">
+                <History className="h-4 w-4 mr-2" /> 
+                Payment History
+              </TabsTrigger>
+              <TabsTrigger value="concessions" className="data-[state=active]:bg-[#138808] data-[state=active]:text-white">
+                <Receipt className="h-4 w-4 mr-2" /> 
+                Concessions
+              </TabsTrigger>
+              <TabsTrigger value="structure" className="data-[state=active]:bg-[#FF9933] data-[state=active]:text-white">
+                <IndianRupee className="h-4 w-4 mr-2" /> 
+                Fee Structure
+              </TabsTrigger>
+            </TabsList>
             
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-3 mb-8">
-                <TabsTrigger value="pay-now" className="data-[state=active]:bg-[#FF9933] data-[state=active]:text-white">
-                  <CreditCard className="h-4 w-4 mr-2" /> 
-                  Pay Now
-                </TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-[#000080] data-[state=active]:text-white">
-                  <History className="h-4 w-4 mr-2" /> 
-                  Payment History
-                </TabsTrigger>
-                <TabsTrigger value="concessions" className="data-[state=active]:bg-[#138808] data-[state=active]:text-white">
-                  <FileText className="h-4 w-4 mr-2" /> 
-                  Concessions
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="pay-now" className="animate-fade-in">
-                <Card className="border-[#138808]/10">
-                  <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent rounded-t-xl">
-                    <CardTitle className="text-xl text-[#000080]">Current Fees Due</CardTitle>
-                    <CardDescription>
-                      {MOCK_FEES_DATA.currentDue.term} - Due by {formatDate(MOCK_FEES_DATA.currentDue.dueDate)}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="space-y-6">
-                      <div className="flex flex-col gap-2">
-                        {MOCK_FEES_DATA.currentDue.items.map((item, index) => (
-                          <div key={index} className="flex justify-between py-2 border-b border-[#138808]/30">
-                            <span className="text-[#000080]">{item.name}</span>
-                            <span className="font-medium text-[#000080]">{formatCurrency(item.amount)}</span>
-                          </div>
-                        ))}
-                        
-                        <div className="flex justify-between py-3 mt-2 border-t-2 border-[#138808]">
-                          <span className="font-semibold text-lg text-[#000080]">Total Amount</span>
-                          <span className="font-bold text-lg text-[#FF9933]">{formatCurrency(MOCK_FEES_DATA.currentDue.amount)}</span>
+            <TabsContent value="pay-now" className="animate-fade-in">
+              <Card className="border-[#138808]/10">
+                <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent rounded-t-xl">
+                  <CardTitle className="text-xl text-[#000080]">Current Fees Due</CardTitle>
+                  <CardDescription>
+                    {MOCK_FEES_DATA.currentDue.term} - Due by {formatDate(MOCK_FEES_DATA.currentDue.dueDate)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="space-y-6">
+                    <div className="flex flex-col gap-2">
+                      {MOCK_FEES_DATA.currentDue.items.map((item, index) => (
+                        <div key={index} className="flex justify-between py-2 border-b border-[#138808]/30">
+                          <span className="text-[#000080]">{item.name}</span>
+                          <span className="font-medium text-[#000080]">{formatCurrency(item.amount)}</span>
                         </div>
-                      </div>
+                      ))}
                       
-                      <Button 
-                        onClick={handlePayment} 
-                        className="w-full"
-                        variant="tricolor"
-                        size="lg"
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <span className="animate-pulse">Processing Payment</span>
-                            <span className="ml-2 inline-block animate-spin">⟳</span>
-                          </>
-                        ) : (
-                          <>Pay Now {formatCurrency(MOCK_FEES_DATA.currentDue.amount)}</>
-                        )}
-                      </Button>
-                      
-                      <div className="text-center text-sm text-[#000080]/60 flex items-center justify-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>Secure payment processing. This usually takes less than a minute.</span>
+                      <div className="flex justify-between py-3 mt-2 border-t-2 border-[#138808]">
+                        <span className="font-semibold text-lg text-[#000080]">Total Amount</span>
+                        <span className="font-bold text-lg text-[#FF9933]">{formatCurrency(MOCK_FEES_DATA.currentDue.amount)}</span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="history" className="animate-fade-in">
-                <Card className="border-[#138808]/10">
-                  <CardHeader className="bg-gradient-to-r from-[#000080]/10 to-transparent rounded-t-xl">
-                    <CardTitle className="text-xl text-[#000080]">Payment History</CardTitle>
-                    <CardDescription>
-                      View all your previous payments
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      {MOCK_FEES_DATA.paymentHistory.map((payment) => (
-                        <div
-                          key={payment.id}
-                          className="p-4 border border-[#138808]/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white hover:shadow-md transition-all"
-                        >
+                    
+                    <Button 
+                      onClick={handlePayment} 
+                      className="w-full"
+                      variant="tricolor"
+                      size="lg"
+                      disabled={isProcessing}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <span className="animate-pulse">Processing Payment</span>
+                          <span className="ml-2 inline-block animate-spin">⟳</span>
+                        </>
+                      ) : (
+                        <>Pay Now {formatCurrency(MOCK_FEES_DATA.currentDue.amount)}</>
+                      )}
+                    </Button>
+                    
+                    <div className="text-center text-sm text-[#000080]/60 flex items-center justify-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>Secure payment processing. This usually takes less than a minute.</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="history" className="animate-fade-in">
+              <Card className="border-[#138808]/10">
+                <CardHeader className="bg-gradient-to-r from-[#000080]/10 to-transparent rounded-t-xl">
+                  <CardTitle className="text-xl text-[#000080]">Payment History</CardTitle>
+                  <CardDescription>
+                    View all your previous payments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {MOCK_FEES_DATA.paymentHistory.map((payment) => (
+                      <div
+                        key={payment.id}
+                        className="p-4 border border-[#138808]/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white hover:shadow-md transition-all"
+                      >
+                        <div>
+                          <h3 className="font-medium text-[#000080]">{payment.term}</h3>
+                          <p className="text-sm text-[#000080]/60">
+                            Paid on {formatDate(payment.date)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-[#000080]">{formatCurrency(payment.amount)}</span>
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-[#138808]/10 text-[#138808]">
+                            <CheckCircle className="h-3 w-3 mr-1" /> {payment.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="concessions" className="animate-fade-in">
+              <Card className="border-[#138808]/10">
+                <CardHeader className="bg-gradient-to-r from-[#138808]/10 to-transparent rounded-t-xl">
+                  <CardTitle className="text-xl text-[#000080]">Available Concessions</CardTitle>
+                  <CardDescription>
+                    Fee discounts and concessions you're eligible for
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {MOCK_FEES_DATA.concessions.map((concession) => (
+                      <div
+                        key={concession.id}
+                        className="p-4 border border-[#138808]/20 rounded-lg bg-white hover:shadow-md transition-all"
+                      >
+                        <div className="flex justify-between items-start mb-2">
                           <div>
-                            <h3 className="font-medium text-[#000080]">{payment.term}</h3>
+                            <h3 className="font-medium text-[#000080]">{concession.type}</h3>
                             <p className="text-sm text-[#000080]/60">
-                              Paid on {formatDate(payment.date)}
+                              {concession.percentage}% discount
                             </p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#000080]">{formatCurrency(payment.amount)}</span>
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-[#138808]/10 text-[#138808]">
-                              <CheckCircle className="h-3 w-3 mr-1" /> {payment.status}
+                          <div>
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                              concession.status === 'Applied' ? 'bg-[#138808]/10 text-[#138808]' : 'bg-[#FF9933]/10 text-[#FF9933]'
+                            }`}>
+                              {concession.status}
                             </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="concessions" className="animate-fade-in">
-                <Card className="border-[#138808]/10">
-                  <CardHeader className="bg-gradient-to-r from-[#138808]/10 to-transparent rounded-t-xl">
-                    <CardTitle className="text-xl text-[#000080]">Available Concessions</CardTitle>
-                    <CardDescription>
-                      Fee discounts and concessions you're eligible for
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      {MOCK_FEES_DATA.concessions.map((concession) => (
-                        <div
-                          key={concession.id}
-                          className="p-4 border border-[#138808]/20 rounded-lg bg-white hover:shadow-md transition-all"
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h3 className="font-medium text-[#000080]">{concession.type}</h3>
-                              <p className="text-sm text-[#000080]/60">
-                                {concession.percentage}% discount
-                              </p>
-                            </div>
-                            <div>
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                                concession.status === 'Applied' ? 'bg-[#138808]/10 text-[#138808]' : 'bg-[#FF9933]/10 text-[#FF9933]'
-                              }`}>
-                                {concession.status}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#138808]/30">
-                            <span className="text-[#000080]/60">Discount Amount</span>
-                            <span className="font-medium text-[#138808]">{formatCurrency(concession.amount)}</span>
-                          </div>
-                          {concession.status === 'Eligible' && (
-                            <Button
-                              onClick={() => applyConcession(concession.id)}
-                              className="w-full mt-3"
-                              variant="premium-green"
-                              size="sm"
-                            >
-                              Apply Concession
-                            </Button>
-                          )}
+                        <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#138808]/30">
+                          <span className="text-[#000080]/60">Discount Amount</span>
+                          <span className="font-medium text-[#138808]">{formatCurrency(concession.amount)}</span>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+                        {concession.status === 'Eligible' && (
+                          <Button
+                            onClick={() => applyConcession(concession.id)}
+                            className="w-full mt-3"
+                            variant="premium-green"
+                            size="sm"
+                          >
+                            Apply Concession
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="structure" className="animate-fade-in">
+              <Card className="border-[#138808]/10">
+                <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent rounded-t-xl">
+                  <CardTitle className="text-xl text-[#000080]">Fee Structure</CardTitle>
+                  <CardDescription>
+                    Academic year 2023-2024 fee structure
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-[#138808]">
+                          <th className="text-left py-3 px-4 font-semibold text-[#000080]">Grade</th>
+                          <th className="text-right py-3 px-4 font-semibold text-[#000080]">Tuition Fee</th>
+                          <th className="text-right py-3 px-4 font-semibold text-[#000080]">Development Fee</th>
+                          <th className="text-right py-3 px-4 font-semibold text-[#000080]">Activity Fee</th>
+                          <th className="text-right py-3 px-4 font-semibold text-[#000080]">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#138808]/20">
+                        {MOCK_FEES_DATA.feeStructure.map((item, index) => (
+                          <tr key={index} className="hover:bg-slate-50 transition-colors">
+                            <td className="py-3 px-4 font-medium text-[#000080]">{item.grade}</td>
+                            <td className="text-right py-3 px-4">{formatCurrency(item.tuition)}</td>
+                            <td className="text-right py-3 px-4">{formatCurrency(item.development)}</td>
+                            <td className="text-right py-3 px-4">{formatCurrency(item.activity)}</td>
+                            <td className="text-right py-3 px-4 font-semibold text-[#FF9933]">{formatCurrency(item.total)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-[#138808]/5 rounded-lg border border-[#138808]/20 text-sm text-[#000080]/80">
+                    <p className="font-semibold mb-2">Additional Information:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Fees are payable in three installments (Term-wise)</li>
+                      <li>Late payment fees of ₹500 will be charged after due dates</li>
+                      <li>Annual fees must be cleared by March 31st of the academic year</li>
+                      <li>10% discount on full year payment if paid before April 30th</li>
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </DashboardLayout>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
@@ -69,9 +68,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         ...commonItems,
         { path: '/fees', label: 'Fees', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
         { path: '/transport', label: 'Transport', icon: <Bus className="h-5 w-5 text-[#138808]" /> },
+        { path: '/reports', label: 'Progress Reports', icon: <FileBarChart className="h-5 w-5 text-[#138808]" /> },
+        { path: '/leaves', label: 'Leave Management', icon: <Clock className="h-5 w-5 text-[#138808]" /> },
         { path: '/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
         { path: '/store', label: 'School Store', icon: <ShoppingBag className="h-5 w-5 text-[#138808]" /> },
         { path: '/student-profile', label: 'Student Profile', icon: <Award className="h-5 w-5 text-[#138808]" /> },
+        { path: '/calendar', label: 'Event Calendar', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
+        { path: '/feedback', label: 'Feedback', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
+        { path: '/ptm', label: 'Parent Teacher Meetings', icon: <Users className="h-5 w-5 text-[#138808]" /> },
+        { path: '/hall-tickets', label: 'Hall Tickets', icon: <BookOpen className="h-5 w-5 text-[#138808]" /> },
         { path: '/help', label: 'Help & Support', icon: <HelpCircle className="h-5 w-5 text-[#138808]" /> },
       ];
     }
