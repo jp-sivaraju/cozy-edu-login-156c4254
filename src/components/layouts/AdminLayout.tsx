@@ -128,10 +128,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     setOpenSubmenu(prevPath => prevPath === path ? null : path);
   };
 
-  // Mark the Finance section as active when on /admin/financial
+  // Auto-open submenu based on current route
   useEffect(() => {
-    if (location.pathname.includes('/admin/financial')) {
-      setOpenSubmenu('/admin/financial');
+    // Find which parent menu contains the current path
+    const currentParentMenu = navItems.find(item => 
+      item.submenu?.some(subItem => location.pathname.includes(subItem.path))
+    );
+    
+    if (currentParentMenu) {
+      setOpenSubmenu(currentParentMenu.path);
     }
   }, [location.pathname]);
 
@@ -149,14 +154,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <aside 
         className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
                   ${sidebarCollapsed ? 'w-20' : 'w-64'} 
-                  fixed md:relative bg-gradient-to-b from-blue-900 to-indigo-900 border-r border-blue-800/20 
+                  fixed md:relative bg-gradient-to-b from-[#000080] to-[#000080]/90 border-r border-[#000080]/20 
                   shadow-xl h-screen transition-all duration-300 z-40`}
       >
         {/* Logo area */}
-        <div className="p-4 border-b border-blue-800/30 flex items-center justify-between">
+        <div className="p-4 border-b border-[#000080]/30 flex items-center justify-between">
           <Link to="/admin" className="flex items-center">
             {!sidebarCollapsed && (
-              <span className="font-bold text-xl bg-gradient-to-r from-blue-100 to-white bg-clip-text text-transparent">
+              <span className="font-bold text-xl bg-gradient-to-r from-[#FF9933] to-white bg-clip-text text-transparent">
                 EduSense ERP
               </span>
             )}
@@ -166,14 +171,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </Link>
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)} 
-            className="text-blue-300 hover:text-white transition-colors hidden md:block"
+            className="text-[#FF9933] hover:text-white transition-colors hidden md:block"
           >
             <ChevronRight className={`h-5 w-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} />
           </button>
         </div>
         
         {/* Navigation */}
-        <nav className="py-6 px-3 flex flex-col h-[calc(100vh-5rem)] overflow-auto scrollbar-thin scrollbar-thumb-blue-800/30 scrollbar-track-transparent">
+        <nav className="py-6 px-3 flex flex-col h-[calc(100vh-5rem)] overflow-auto scrollbar-thin scrollbar-thumb-[#000080]/30 scrollbar-track-transparent">
           <div className="flex-1 space-y-1">
             {navItems.map((item, index) => (
               <div key={index} className="relative">
@@ -183,8 +188,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                       onClick={() => handleSubmenuToggle(item.path)}
                       className={`w-full flex items-center justify-between p-3 rounded-lg mb-1 transition-all duration-200
                         ${isActive(item.path) || openSubmenu === item.path 
-                          ? 'bg-blue-800/60 text-white' 
-                          : 'text-blue-100 hover:bg-blue-800/40'
+                          ? 'bg-[#000080]/60 text-white' 
+                          : 'text-[#FF9933] hover:bg-[#000080]/40 hover:text-white'
                         }
                         ${sidebarCollapsed ? 'px-2 justify-center' : 'px-3 justify-between'}`
                       }
@@ -193,12 +198,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         <TooltipProvider delayDuration={300}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <span className={`${!sidebarCollapsed && 'mr-3'} text-blue-100 ${isActive(item.path) || openSubmenu === item.path ? 'text-white' : ''}`}>
+                              <span className={`${!sidebarCollapsed && 'mr-3'} ${isActive(item.path) || openSubmenu === item.path ? 'text-white' : 'text-[#FF9933]'}`}>
                                 {item.icon}
                               </span>
                             </TooltipTrigger>
                             {sidebarCollapsed && (
-                              <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                              <TooltipContent side="right" className="bg-[#000080] text-white border-[#000080]/70">
                                 {item.label}
                               </TooltipContent>
                             )}
@@ -218,15 +223,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     
                     {/* Submenu */}
                     {openSubmenu === item.path && !sidebarCollapsed && (
-                      <div className="ml-6 pl-3 border-l border-blue-700 space-y-1 animate-in slide-in-from-left-1 duration-200 py-1">
+                      <div className="ml-6 pl-3 border-l border-[#FF9933]/40 space-y-1 animate-in slide-in-from-left-1 duration-200 py-1">
                         {item.submenu.map((subItem, idx) => (
                           <Link 
                             key={idx} 
                             to={subItem.path}
                             className={`block py-2 px-3 rounded-md text-sm ${
                               location.pathname === subItem.path 
-                                ? 'bg-blue-700/60 text-white font-medium' 
-                                : 'text-blue-200 hover:bg-blue-800/30 hover:text-white'
+                                ? 'bg-[#FF9933]/20 text-white font-medium' 
+                                : 'text-[#FF9933]/90 hover:bg-[#000080]/30 hover:text-white'
                             }`}
                           >
                             {subItem.label}
@@ -237,17 +242,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     
                     {/* Collapsed sidebar tooltips for submenu */}
                     {sidebarCollapsed && openSubmenu === item.path && (
-                      <div className="absolute left-full top-0 ml-2 bg-blue-900 border border-blue-700 rounded-lg shadow-xl p-2 animate-in slide-in-from-left-1 z-50 min-w-[200px]">
+                      <div className="absolute left-full top-0 ml-2 bg-[#000080] border border-[#000080]/70 rounded-lg shadow-xl p-2 animate-in slide-in-from-left-1 z-50 min-w-[200px]">
                         <div className="py-1 font-medium text-white px-3">{item.label}</div>
-                        <div className="border-t border-blue-800 mt-1 pt-1">
+                        <div className="border-t border-[#000080]/70 mt-1 pt-1">
                           {item.submenu.map((subItem, idx) => (
                             <Link 
                               key={idx} 
                               to={subItem.path}
                               className={`block py-2 px-3 rounded-md text-sm ${
                                 location.pathname === subItem.path 
-                                  ? 'bg-blue-700/60 text-white font-medium' 
-                                  : 'text-blue-200 hover:bg-blue-800/40 hover:text-white'
+                                  ? 'bg-[#FF9933]/20 text-white font-medium' 
+                                  : 'text-[#FF9933]/90 hover:bg-[#000080]/40 hover:text-white'
                               }`}
                             >
                               {subItem.label}
@@ -262,8 +267,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     to={item.path}
                     className={`flex items-center p-3 rounded-lg mb-1 transition-colors
                       ${isActive(item.path) 
-                        ? 'bg-blue-800/60 text-white' 
-                        : 'text-blue-100 hover:bg-blue-800/40'
+                        ? 'bg-[#000080]/60 text-white' 
+                        : 'text-[#FF9933] hover:bg-[#000080]/40 hover:text-white'
                       }
                       ${sidebarCollapsed ? 'justify-center px-2' : 'px-3'}`
                     }
@@ -271,12 +276,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <TooltipProvider delayDuration={300}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className={`${!sidebarCollapsed && 'mr-3'} text-blue-100 ${isActive(item.path) ? 'text-white' : ''}`}>
+                          <span className={`${!sidebarCollapsed && 'mr-3'} ${isActive(item.path) ? 'text-white' : 'text-[#FF9933]'}`}>
                             {item.icon}
                           </span>
                         </TooltipTrigger>
                         {sidebarCollapsed && (
-                          <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                          <TooltipContent side="right" className="bg-[#000080] text-white border-[#000080]/70">
                             {item.label}
                           </TooltipContent>
                         )}
@@ -293,31 +298,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </div>
           
           {/* User profile and logout */}
-          <div className="pt-4 border-t border-blue-800/30 mt-4">
+          <div className="pt-4 border-t border-[#000080]/30 mt-4">
             <div 
-              className={`p-3 rounded-lg transition-colors text-blue-100 hover:bg-blue-800/40 mb-2 ${sidebarCollapsed ? 'justify-center' : ''}`}
+              className={`p-3 rounded-lg transition-colors text-[#FF9933] hover:bg-[#000080]/40 hover:text-white mb-2 ${sidebarCollapsed ? 'justify-center' : ''}`}
             >
               {!sidebarCollapsed ? (
                 <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm mr-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF9933] to-[#FF9933]/70 flex items-center justify-center text-white font-semibold text-sm mr-2">
                     {user?.name?.charAt(0) || 'A'}
                   </div>
                   <div className="overflow-hidden">
                     <div className="text-sm font-medium truncate">{user?.name || 'Admin'}</div>
-                    <div className="text-xs text-blue-300 truncate">{user?.email || 'admin@edusense.com'}</div>
+                    <div className="text-xs text-[#FF9933]/80 truncate">{user?.email || 'admin@edusense.com'}</div>
                   </div>
                 </div>
               ) : (
                 <TooltipProvider delayDuration={300}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="w-8 h-8 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+                      <div className="w-8 h-8 mx-auto rounded-full bg-gradient-to-br from-[#FF9933] to-[#FF9933]/70 flex items-center justify-center text-white font-semibold text-sm">
                         {user?.name?.charAt(0) || 'A'}
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                    <TooltipContent side="right" className="bg-[#000080] text-white border-[#000080]/70">
                       <p>{user?.name || 'Admin'}</p>
-                      <p className="text-xs text-blue-300">{user?.email || 'admin@edusense.com'}</p>
+                      <p className="text-xs text-[#FF9933]/80">{user?.email || 'admin@edusense.com'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -326,7 +331,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             
             <Button 
               variant="ghost" 
-              className={`w-full flex items-center space-x-2 text-blue-100 hover:bg-blue-800/40 hover:text-white
+              className={`w-full flex items-center space-x-2 text-[#FF9933] hover:bg-[#000080]/40 hover:text-white
                 ${sidebarCollapsed ? 'justify-center px-2' : 'justify-start px-3'}`}
               onClick={() => {
                 logout();
@@ -346,15 +351,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       
       {/* Main content */}
       <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
-        <header className="bg-gradient-to-r from-indigo-600 to-blue-700 shadow-md sticky top-0 z-30">
+        <header className="bg-gradient-to-r from-[#FF9933] to-[#FFAC33] shadow-md sticky top-0 z-30">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
-              <p className="text-blue-100 text-sm">Welcome back, {user?.name || 'Admin'}</p>
+              <p className="text-white/90 text-sm">Welcome back, {user?.name || 'Admin'}</p>
             </div>
             <Button
-              variant="outline"
-              className="bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm"
+              variant="glass"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
               onClick={() => navigate('/dashboard')}
             >
               Main Dashboard

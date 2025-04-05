@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,6 +25,7 @@ import HallTickets from "./pages/HallTickets";
 import PTM from "./pages/PTM";
 import CurriculumGeneration from "./pages/admin/CurriculumGeneration";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import FinancialOverview from "./pages/admin/FinancialOverview";
 import AdminLayout from "./components/layouts/AdminLayout";
 import NotFound from "./pages/NotFound";
 
@@ -226,7 +228,17 @@ const AppRoutes = () => {
         }
       />
 
-      {/* New Admin Routes for all modules */}
+      {/* Financial Overview - Show the dedicated Financial Overview page */}
+      <Route
+        path="/admin/financial"
+        element={
+          <AdminRoute>
+            <FinancialOverview />
+          </AdminRoute>
+        }
+      />
+
+      {/* New Admin Routes for all other modules */}
       <Route path="/admin/users" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
       <Route path="/admin/staff" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
       <Route path="/admin/onboarding" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

@@ -10,7 +10,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-[#138808]/10 bg-white/80 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
+      "rounded-xl border border-[#138808]/10 bg-white/90 backdrop-blur-md text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
       className
     )}
     {...props}
@@ -100,7 +100,7 @@ const GlassCard = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-white/40 bg-white/70 backdrop-blur-lg text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
+      "rounded-xl border border-white/40 bg-white/80 backdrop-blur-lg text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in",
       className
     )}
     {...props}
@@ -115,7 +115,7 @@ const TricolorCard = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl overflow-hidden backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in border-t-4 border-t-[#FF9933] border-b-4 border-b-[#138808] border-x border-x-[#138808]/10 bg-white/80",
+      "rounded-xl overflow-hidden backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in border-t-4 border-t-[#FF9933] border-b-4 border-b-[#138808] border-x border-x-[#138808]/10 bg-white/90",
       className
     )}
     {...props}
