@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -65,7 +64,6 @@ const DiaryManagementPage = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['diaryEntries', selectedClass, selectedSubject],
     queryFn: async () => {
-      // Simulate API call with a delay
       await new Promise(resolve => setTimeout(resolve, 800));
       return {
         className: mockClasses.find(c => c.id === selectedClass)?.name || '',
@@ -77,6 +75,27 @@ const DiaryManagementPage = () => {
       };
     }
   });
+
+  const mockLessonPlan = [
+    {
+      id: '1',
+      topic: 'Introduction to Algebra',
+      description: 'Basic algebraic concepts and expressions',
+      completed: false
+    },
+    {
+      id: '2',
+      topic: 'Linear Equations',
+      description: 'Solving simple linear equations with one variable',
+      completed: false
+    },
+    {
+      id: '3',
+      topic: 'Graphing Linear Equations',
+      description: 'Plotting linear equations on the coordinate plane',
+      completed: false
+    }
+  ];
 
   const handleNewEntrySubmit = (formData: any) => {
     console.log('New diary entry:', formData);
@@ -157,10 +176,11 @@ const DiaryManagementPage = () => {
             </CardHeader>
             <CardContent>
               <DiaryEntryForm 
-                onSubmit={handleNewEntrySubmit}
-                onCancel={() => setShowNewEntryForm(false)}
+                date={new Date()}
                 className={data?.className || ''}
                 subject={data?.subject || ''}
+                lessonPlan={mockLessonPlan}
+                onSave={handleNewEntrySubmit}
               />
             </CardContent>
           </Card>
