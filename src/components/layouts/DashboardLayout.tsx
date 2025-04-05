@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
@@ -5,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { 
   Home, FileText, Bus, LogOut, User, Book, Calendar, Bell, ShoppingBag, HelpCircle, Award, 
   MessageSquare, BookOpen, GraduationCap, Settings, FileBarChart, DollarSign, Users, 
-  Library, Box, Clock, Database, BarChart2
+  Library, Box, Clock, Database, BarChart2, Mail, CheckSquare, BookMarked, BrainCircuit,
+  LayoutDashboard, UserCheck
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import confetti from 'canvas-confetti';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -33,6 +36,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [showCelebration, setShowCelebration] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'alert', content: 'New assessment results available for 8A', timestamp: new Date(), read: false },
+    { id: 2, type: 'info', content: 'Parent meeting scheduled for tomorrow', timestamp: new Date(Date.now() - 3600000), read: false },
+    { id: 3, type: 'alert', content: 'Attendance below 80% for 3 students in 9A', timestamp: new Date(Date.now() - 7200000), read: true },
+  ]);
   
   useEffect(() => {
     // Show confetti celebration when dashboard loads
@@ -56,9 +65,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // Role-based navigation items
   const getNavigationItems = (): NavigationItem[] => {
     const commonItems: NavigationItem[] = [
-      { path: '/dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
-      { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
-      { path: '/diary', label: 'Diary', icon: <Book className="h-5 w-5 text-[#138808]" /> },
+      { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5 text-[#138808]" /> },
     ];
 
     if (!user) return commonItems;
@@ -66,11 +73,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     if (user.role === 'parent') {
       return [
         ...commonItems,
+        { path: '/diary', label: 'Diary', icon: <Book className="h-5 w-5 text-[#138808]" /> },
+        { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
         { path: '/fees', label: 'Fees', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
         { path: '/transport', label: 'Transport', icon: <Bus className="h-5 w-5 text-[#138808]" /> },
         { path: '/reports', label: 'Progress Reports', icon: <FileBarChart className="h-5 w-5 text-[#138808]" /> },
         { path: '/leaves', label: 'Leave Management', icon: <Clock className="h-5 w-5 text-[#138808]" /> },
-        { path: '/notifications', label: 'Notifications', icon: <Bell className="h-5 w-5 text-[#138808]" /> },
         { path: '/store', label: 'School Store', icon: <ShoppingBag className="h-5 w-5 text-[#138808]" /> },
         { path: '/student-profile', label: 'Student Profile', icon: <Award className="h-5 w-5 text-[#138808]" /> },
         { path: '/calendar', label: 'Event Calendar', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
@@ -84,9 +92,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     if (user.role === 'teacher') {
       return [
         ...commonItems,
-        { path: '/teacher/attendance', label: 'Attendance', icon: <FileText className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/attendance', label: 'Attendance', icon: <UserCheck className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/diary', label: 'Diary Management', icon: <Book className="h-5 w-5 text-[#138808]" /> },
         { path: '/teacher/grades', label: 'Grades', icon: <Award className="h-5 w-5 text-[#138808]" /> },
-        { path: '/teacher/communication', label: 'Communication', icon: <MessageSquare className="h-5 w-5 text-[#138808]" /> },
+        { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/assessments', label: 'Assessments', icon: <CheckSquare className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/performance', label: 'Student Performance', icon: <BarChart2 className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/communication', label: 'Parent Communication', icon: <Mail className="h-5 w-5 text-[#138808]" /> },
+        { path: '/teacher/lessons', label: 'Lesson Planning', icon: <BookMarked className="h-5 w-5 text-[#138808]" /> },
+        { path: '/leaves', label: 'Leave Management', icon: <Clock className="h-5 w-5 text-[#138808]" /> },
+        { path: '/help', label: 'Help & Support', icon: <HelpCircle className="h-5 w-5 text-[#138808]" /> },
       ];
     }
 
@@ -136,6 +151,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setOpenSubmenu(prevPath => prevPath === path ? null : path);
   };
 
+  const markAllNotificationsAsRead = () => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notification => ({ ...notification, read: true }))
+    );
+  };
+
+  const unreadNotificationsCount = notifications.filter(notification => !notification.read).length;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       {/* Top navigation */}
@@ -146,6 +169,67 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </Link>
           
           <div className="flex items-center space-x-4">
+            {/* Notifications */}
+            <Popover open={showNotifications} onOpenChange={setShowNotifications}>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/20 rounded-full">
+                  <Bell className="h-5 w-5" />
+                  {unreadNotificationsCount > 0 && (
+                    <span className="absolute top-0 right-0 h-4 w-4 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">
+                      {unreadNotificationsCount}
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0">
+                <div className="p-3 border-b border-[#138808]/20 flex justify-between items-center">
+                  <h3 className="font-semibold text-[#000080]">Notifications</h3>
+                  {unreadNotificationsCount > 0 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs h-8"
+                      onClick={markAllNotificationsAsRead}
+                    >
+                      Mark all as read
+                    </Button>
+                  )}
+                </div>
+                <div className="max-h-[300px] overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    <div>
+                      {notifications.map(notification => (
+                        <div 
+                          key={notification.id} 
+                          className={`p-3 border-b border-[#138808]/10 ${notification.read ? 'bg-white' : 'bg-blue-50'}`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`mt-1 h-2 w-2 rounded-full ${notification.read ? 'bg-transparent' : 'bg-blue-500'}`}></div>
+                            <div>
+                              <p className="text-sm">{notification.content}</p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {notification.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-slate-500">
+                      <p>No notifications</p>
+                    </div>
+                  )}
+                </div>
+                <div className="p-2 border-t border-[#138808]/20 text-center">
+                  <Button variant="ghost" size="sm" className="text-xs w-full">
+                    View all notifications
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* User menu */}
             <div className="relative">
               <NavigationMenu>
                 <NavigationMenuList>
