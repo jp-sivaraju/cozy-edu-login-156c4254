@@ -1,315 +1,205 @@
 
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar } from '@/components/ui/calendar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Book, MapPin, Clock, Calendar as CalendarIcon } from 'lucide-react';
+import WeeklySchedule from '@/components/schedule/WeeklySchedule';
 
-// Mock data for demonstration
-const WEEKLY_SCHEDULE = [
-  {
-    day: 'Monday',
-    classes: [
-      { id: 1, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '09:00 - 09:45', room: 'Room 101' },
-      { id: 2, name: 'Science', teacher: 'Mr. Patel', time: '09:45 - 10:30', room: 'Lab 2' },
-      { id: 3, name: 'Break', time: '10:30 - 10:45' },
-      { id: 4, name: 'English', teacher: 'Mrs. Gupta', time: '10:45 - 11:30', room: 'Room 103' },
-      { id: 5, name: 'History', teacher: 'Mr. Singh', time: '11:30 - 12:15', room: 'Room 105' },
-    ]
-  },
-  {
-    day: 'Tuesday',
-    classes: [
-      { id: 6, name: 'Science', teacher: 'Mr. Patel', time: '09:00 - 09:45', room: 'Lab 2' },
-      { id: 7, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '09:45 - 10:30', room: 'Room 101' },
-      { id: 8, name: 'Break', time: '10:30 - 10:45' },
-      { id: 9, name: 'Physical Education', teacher: 'Mr. Kumar', time: '10:45 - 11:30', room: 'Playground' },
-      { id: 10, name: 'Art', teacher: 'Mrs. Gupta', time: '11:30 - 12:15', room: 'Art Studio' },
-    ]
-  },
-  {
-    day: 'Wednesday',
-    classes: [
-      { id: 11, name: 'English', teacher: 'Mrs. Gupta', time: '09:00 - 09:45', room: 'Room 103' },
-      { id: 12, name: 'Social Studies', teacher: 'Mr. Singh', time: '09:45 - 10:30', room: 'Room 105' },
-      { id: 13, name: 'Break', time: '10:30 - 10:45' },
-      { id: 14, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
-      { id: 15, name: 'Computer Science', teacher: 'Mr. Verma', time: '11:30 - 12:15', room: 'Computer Lab' },
-    ]
-  },
-  {
-    day: 'Thursday',
-    classes: [
-      { id: 16, name: 'Science', teacher: 'Mr. Patel', time: '09:00 - 09:45', room: 'Lab 2' },
-      { id: 17, name: 'Hindi', teacher: 'Mrs. Mishra', time: '09:45 - 10:30', room: 'Room 104' },
-      { id: 18, name: 'Break', time: '10:30 - 10:45' },
-      { id: 19, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
-      { id: 20, name: 'English', teacher: 'Mrs. Gupta', time: '11:30 - 12:15', room: 'Room 103' },
-    ]
-  },
-  {
-    day: 'Friday',
-    classes: [
-      { id: 21, name: 'Geography', teacher: 'Mr. Singh', time: '09:00 - 09:45', room: 'Room 105' },
-      { id: 22, name: 'Science', teacher: 'Mr. Patel', time: '09:45 - 10:30', room: 'Lab 2' },
-      { id: 23, name: 'Break', time: '10:30 - 10:45' },
-      { id: 24, name: 'Mathematics', teacher: 'Mrs. Sharma', time: '10:45 - 11:30', room: 'Room 101' },
-      { id: 25, name: 'Music', teacher: 'Mr. Sharma', time: '11:30 - 12:15', room: 'Music Room' },
-    ]
-  },
-];
-
-// Mock calendar events
+// This type definition aligns with our WeeklySchedule component
 interface CalendarEvent {
   id: number;
   name: string;
   time: string;
   teacher: string;
+  subject?: string;
+  location?: string;
+  color?: string;
 }
 
-const CALENDAR_EVENTS: Record<string, CalendarEvent[]> = {
-  "2025-04-04": [
-    { id: 1, name: "Mathematics Test", time: "09:00 - 10:00", teacher: "Mrs. Sharma" },
-    { id: 2, name: "Science Project Due", time: "14:00", teacher: "Mr. Patel" }
-  ],
-  "2025-04-05": [
-    { id: 3, name: "Field Trip", time: "09:00 - 15:00", teacher: "Mr. Kumar" }
-  ],
-  "2025-04-08": [
-    { id: 4, name: "Parent-Teacher Meeting", time: "16:00 - 18:00", teacher: "" }
-  ],
-  "2025-04-15": [
-    { id: 5, name: "Annual Sports Day", time: "09:00 - 16:00", teacher: "" }
-  ]
-};
-
 const Schedule = () => {
-  const [activeTab, setActiveTab] = useState("weekly");
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [activeTab, setActiveTab] = useState('weekly');
+  const [selectedChild, setSelectedChild] = useState('1');
   
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  };
-  
-  const getEventsForDate = (date: Date | undefined) => {
-    if (!date) return [];
-    
-    const dateStr = date.toISOString().split('T')[0];
-    return CALENDAR_EVENTS[dateStr] || [];
-  };
-  
-  const renderWeeklyView = () => (
-    <div className="space-y-6">
-      {WEEKLY_SCHEDULE.map((day) => (
-        <Card key={day.day} className="border-[#138808]/20 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent pb-2">
-            <CardTitle className="text-xl text-[#000080]">{day.day}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {day.classes.map((cls) => (
-              <div 
-                key={cls.id} 
-                className={`p-4 border-b border-[#138808]/10 hover:bg-slate-50 transition-colors
-                  ${cls.name === 'Break' ? 'bg-[#138808]/5' : ''}`}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium text-[#000080]">{cls.name}</h3>
-                    {cls.teacher && <p className="text-sm text-slate-600">- {cls.teacher}</p>}
-                  </div>
-                  <Badge 
-                    className={`${cls.name === 'Break' ? 'bg-[#138808]/80' : 'bg-[#FF9933]'}`}
-                  >
-                    {cls.time}
-                  </Badge>
-                </div>
-                {cls.room && (
-                  <div className="mt-2 text-xs text-slate-500 flex items-center">
-                    <MapPin className="h-3 w-3 mr-1" /> {cls.room}
-                  </div>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-
-  const renderCalendarView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-6">
-      <div className="md:col-span-3">
-        <Card className="border-[#138808]/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-[#000080]">Select Date</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              className="rounded-md border border-[#138808]/20 pointer-events-auto"
-              modifiers={{
-                booked: Object.keys(CALENDAR_EVENTS).map(date => new Date(date)),
-              }}
-              modifiersStyles={{
-                booked: { 
-                  fontWeight: 'bold',
-                  backgroundColor: 'rgba(255, 153, 51, 0.15)',
-                  color: '#000080',
-                  border: '1px solid rgba(255, 153, 51, 0.3)'
-                }
-              }}
-            />
-          </CardContent>
-        </Card>
-      </div>
+  const { data, isLoading } = useQuery({
+    queryKey: ['schedule', selectedChild],
+    queryFn: async () => {
+      // Simulating API call with a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      <div className="md:col-span-4">
-        <Card className="border-[#138808]/20 h-full">
-          <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent pb-2">
-            <CardTitle className="text-lg text-[#000080]">
-              Events for {formatDate(selectedDate)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {getEventsForDate(selectedDate).length > 0 ? (
-              <div className="space-y-4">
-                {getEventsForDate(selectedDate).map((event: CalendarEvent) => (
-                  <div key={event.id} className="p-4 border border-[#138808]/20 rounded-lg hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-medium text-[#000080]">{event.name}</h3>
-                      <Badge className="bg-[#FF9933]">
-                        <Clock className="h-3 w-3 mr-1" /> {event.time}
-                      </Badge>
-                    </div>
-                    {event.teacher && (
-                      <p className="text-sm text-slate-600 mt-2">
-                        <Book className="h-3 w-3 inline mr-1" /> {event.teacher}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-48 text-center">
-                <Clock className="h-10 w-10 text-[#138808]/40 mb-2" />
-                <p className="text-slate-500">No events scheduled for this date</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
-  const renderWeeklyCalendarView = () => {
-    const currentDate = new Date();
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    const periods = ['09:00 - 09:45', '09:45 - 10:30', '10:30 - 10:45', '10:45 - 11:30', '11:30 - 12:15'];
-
+      return {
+        children: [
+          { id: '1', name: 'Aryan Singh', grade: '8A' },
+          { id: '2', name: 'Diya Singh', grade: '5B' },
+        ],
+        events: [
+          { 
+            id: 1, 
+            name: 'Mathematics', 
+            time: '8:00 AM', 
+            teacher: 'Mrs. Gupta',
+            location: 'Room 101',
+            subject: 'Mathematics'
+          },
+          { 
+            id: 2, 
+            name: 'Science', 
+            time: '9:00 AM', 
+            teacher: 'Mr. Sharma',
+            location: 'Lab 3',
+            subject: 'Science'
+          },
+          { 
+            id: 3, 
+            name: 'English', 
+            time: '10:00 AM', 
+            teacher: 'Mrs. Patel',
+            location: 'Room 205',
+            subject: 'English'
+          },
+          { 
+            id: 4, 
+            name: 'History', 
+            time: '11:00 AM', 
+            teacher: 'Mr. Kumar',
+            location: 'Room 108',
+            subject: 'History'
+          },
+          { 
+            id: 5, 
+            name: 'Lunch Break', 
+            time: '12:00 PM', 
+            teacher: 'N/A',
+            location: 'Cafeteria'
+          },
+          { 
+            id: 6, 
+            name: 'Physical Education', 
+            time: '1:00 PM', 
+            teacher: 'Mr. Singh',
+            location: 'Sports Field',
+            subject: 'Physical Education'
+          },
+          { 
+            id: 7, 
+            name: 'Computer Science', 
+            time: '2:00 PM', 
+            teacher: 'Mrs. Reddy',
+            location: 'Computer Lab',
+            subject: 'Computer'
+          }
+        ]
+      };
+    }
+  });
+  
+  if (isLoading) {
     return (
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="border border-[#138808]/30 p-2 bg-[#138808]/10 text-[#000080] text-left">Time</th>
-              {days.map((day) => (
-                <th key={day} className="border border-[#138808]/30 p-2 bg-[#138808]/10 text-[#000080] min-w-[150px]">
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {periods.map((period, idx) => (
-              <tr key={period} className={idx === 2 ? 'bg-[#138808]/5' : 'bg-white'}>
-                <td className="border border-[#138808]/30 p-2 font-medium">
-                  {period}
-                  {idx === 2 && <span className="block text-xs text-[#138808]">Break</span>}
-                </td>
-                {days.map((day, dayIdx) => {
-                  const classInfo = WEEKLY_SCHEDULE[dayIdx].classes[idx];
-                  
-                  return (
-                    <td key={`${day}-${period}`} className="border border-[#138808]/30 p-2">
-                      {idx !== 2 ? (
-                        <div>
-                          <div className="font-medium text-[#000080]">{classInfo.name}</div>
-                          {classInfo.teacher && (
-                            <div className="text-xs text-slate-600">{classInfo.teacher}</div>
-                          )}
-                          {classInfo.room && (
-                            <div className="text-xs text-slate-500 mt-1 flex items-center">
-                              <MapPin className="h-3 w-3 mr-1" /> {classInfo.room}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center text-[#138808] text-sm">Break Time</div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto p-6">
+          <h1 className="text-3xl font-bold text-[#138808] mb-2">Class Schedule</h1>
+          <p className="text-slate-500 mb-8">View your weekly and daily class schedules</p>
+          
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 border-4 border-t-[#138808] border-[#138808]/20 rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </DashboardLayout>
     );
-  };
-
+  }
+  
   return (
     <DashboardLayout>
-      <div className="container p-6">
-        <h1 className="text-3xl font-bold text-[#FF9933] mb-2">Class Schedule</h1>
-        <p className="text-slate-600 mb-6">View class timetable and daily schedule</p>
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold text-[#138808] mb-2">Class Schedule</h1>
+        <p className="text-slate-500 mb-4">View your weekly and daily class schedules</p>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {data && data.children && data.children.length > 1 && (
+          <div className="mb-6 max-w-xs">
+            <Select
+              value={selectedChild}
+              onValueChange={setSelectedChild}
+            >
+              <SelectTrigger className="border-[#138808]/30">
+                <SelectValue placeholder="Select Student" />
+              </SelectTrigger>
+              <SelectContent>
+                {data.children.map(child => (
+                  <SelectItem key={child.id} value={child.id}>
+                    {child.name} ({child.grade})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="mb-6"
+        >
           <TabsList className="mb-6 bg-slate-100">
             <TabsTrigger 
               value="weekly"
               className={`flex-1 ${activeTab === "weekly" ? "bg-[#FF9933] text-white" : ""}`}
             >
-              Weekly Timetable
+              Weekly View
             </TabsTrigger>
             <TabsTrigger 
-              value="grid"
-              className={`flex-1 ${activeTab === "grid" ? "bg-[#FF9933] text-white" : ""}`}
+              value="daily"
+              className={`flex-1 ${activeTab === "daily" ? "bg-[#FF9933] text-white" : ""}`}
             >
-              Weekly Calendar
-            </TabsTrigger>
-            <TabsTrigger 
-              value="calendar"
-              className={`flex-1 ${activeTab === "calendar" ? "bg-[#FF9933] text-white" : ""}`}
-            >
-              Calendar View
+              Daily View
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="weekly" className="mt-0">
-            {renderWeeklyView()}
-          </TabsContent>
-          
-          <TabsContent value="grid" className="mt-0">
             <Card className="border-[#138808]/20">
-              <CardHeader className="bg-gradient-to-r from-[#FF9933]/10 to-transparent">
-                <CardTitle className="text-xl text-[#000080] flex items-center">
-                  <CalendarIcon className="h-5 w-5 mr-2" />
-                  Weekly Calendar View
-                </CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-[#000080]">Weekly Schedule</CardTitle>
+                <CardDescription>
+                  {data?.children.find(c => c.id === selectedChild)?.name}'s class schedule for the week
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                {renderWeeklyCalendarView()}
+                <WeeklySchedule events={data?.events as CalendarEvent[]} />
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="calendar" className="mt-0">
-            {renderCalendarView()}
+          <TabsContent value="daily" className="mt-0">
+            <Card className="border-[#138808]/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-[#000080]">Today's Schedule</CardTitle>
+                <CardDescription>
+                  {data?.children.find(c => c.id === selectedChild)?.name}'s classes for today
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {data?.events.map((event) => (
+                    <div 
+                      key={event.id}
+                      className="flex items-center p-3 rounded-lg border border-[#138808]/20 hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="w-20 text-center border-r border-[#138808]/20 pr-3">
+                        <div className="font-medium text-[#000080]">{event.time}</div>
+                      </div>
+                      
+                      <div className="ml-4 flex-1">
+                        <h3 className="font-medium">{event.name}</h3>
+                        <div className="flex gap-4 mt-1 text-sm text-slate-500">
+                          <div>Teacher: {event.teacher}</div>
+                          {event.location && <div>Room: {event.location}</div>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

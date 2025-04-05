@@ -1,197 +1,206 @@
 
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { CalendarIcon, Clock, Filter, Search } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { toast } from "sonner";
-import { UserCheck, Calendar, HistoryIcon, CheckCircle, XCircle } from 'lucide-react';
+import AttendanceGrid from '@/components/teacher/AttendanceGrid';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
-// Mock student data - would come from API in production
-const students = [
-  { id: "STU001", name: "Ravi Sharma", present: true },
-  { id: "STU002", name: "Priya Patel", present: false },
-  { id: "STU003", name: "Aditya Singh", present: true },
-  { id: "STU004", name: "Meera Kapoor", present: true },
-  { id: "STU005", name: "Arjun Reddy", present: false },
+// Mock data
+const MOCK_CLASSES = [
+  { id: 'class-1', name: 'Class 8A', section: 'A', grade: '8' },
+  { id: 'class-2', name: 'Class 8B', section: 'B', grade: '8' },
+  { id: 'class-3', name: 'Class 9A', section: 'A', grade: '9' },
 ];
 
-// Mock attendance history - would come from API in production
-const attendanceHistory = [
-  { date: "2025-04-02", entries: [
-    { id: "ATTEND001", student_id: "STU001", student_name: "Ravi Sharma", status: "present" },
-    { id: "ATTEND002", student_id: "STU002", student_name: "Priya Patel", status: "absent" },
-  ]},
-  { date: "2025-04-01", entries: [
-    { id: "ATTEND003", student_id: "STU001", student_name: "Ravi Sharma", status: "present" },
-    { id: "ATTEND004", student_id: "STU002", student_name: "Priya Patel", status: "present" },
-  ]},
+const MOCK_STUDENTS = [
+  { id: 'stud-1', name: 'Rahul Sharma', rollNo: '8A01', section: 'A' },
+  { id: 'stud-2', name: 'Priya Singh', rollNo: '8A02', section: 'A' },
+  { id: 'stud-3', name: 'Aditya Patel', rollNo: '8A03', section: 'A' },
+  { id: 'stud-4', name: 'Neha Gupta', rollNo: '8A04', section: 'A' },
+  { id: 'stud-5', name: 'Vikram Thapar', rollNo: '8A05', section: 'A' },
+  { id: 'stud-6', name: 'Anjali Kumar', rollNo: '8A06', section: 'A' },
+  { id: 'stud-7', name: 'Arjun Malhotra', rollNo: '8A07', section: 'A' },
+  { id: 'stud-8', name: 'Meera Reddy', rollNo: '8A08', section: 'A' },
+  { id: 'stud-9', name: 'Rohit Joshi', rollNo: '8A09', section: 'A' },
+  { id: 'stud-10', name: 'Kavita Das', rollNo: '8A10', section: 'A' },
+  { id: 'stud-11', name: 'Deepak Khanna', rollNo: '8A11', section: 'A' },
+  { id: 'stud-12', name: 'Sonia Verma', rollNo: '8A12', section: 'A' },
 ];
 
-const Attendance = () => {
-  const [activeTab, setActiveTab] = useState("today");
-  const [studentsStatus, setStudentsStatus] = useState(students);
+const TeacherAttendance = () => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedClass, setSelectedClass] = useState<string>('');
+  const { toast } = useToast();
   
-  const handleToggleAttendance = (studentId: string) => {
-    setStudentsStatus(prevStatus => 
-      prevStatus.map(student => 
-        student.id === studentId 
-          ? { ...student, present: !student.present } 
-          : student
-      )
-    );
+  const { data: classData, isLoading: classesLoading } = useQuery({
+    queryKey: ['teacherClasses'],
+    queryFn: async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return MOCK_CLASSES;
+    }
+  });
+  
+  const { data: studentsData, isLoading: studentsLoading } = useQuery({
+    queryKey: ['classStudents', selectedClass],
+    queryFn: async () => {
+      // Don't fetch if no class is selected
+      if (!selectedClass) return [];
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return MOCK_STUDENTS;
+    },
+    enabled: !!selectedClass
+  });
+  
+  const handleSaveAttendance = (attendanceData: any) => {
+    console.log('Saving attendance data:', attendanceData);
+    // Would submit to API in a real implementation
   };
   
-  const handleSubmit = () => {
-    // In a real app, this would make an API call
-    console.log("Submitting attendance:", studentsStatus);
-    toast.success("Attendance submitted successfully!");
+  const handleClassChange = (classId: string) => {
+    setSelectedClass(classId);
   };
   
   return (
     <DashboardLayout>
-      <div className="container p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <UserCheck className="h-8 w-8 text-[#FF9933]" />
-          <h1 className="text-3xl font-bold text-[#FF9933]">Attendance Management</h1>
-        </div>
+      <div className="container p-6">
+        <h1 className="text-3xl font-bold text-[#138808] mb-2">Attendance Management</h1>
+        <p className="text-slate-500 mb-6">
+          Record and manage student attendance
+        </p>
         
-        <Tabs defaultValue="today" onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 bg-white border border-[#138808]/30 p-1 rounded-xl">
-            <TabsTrigger 
-              value="today"
-              className={`flex-1 py-3 rounded-lg ${activeTab === "today" ? "bg-[#FF9933] text-white" : "text-[#000080] hover:text-[#000080]/80"}`}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Today's Attendance
-            </TabsTrigger>
-            <TabsTrigger 
-              value="history"
-              className={`flex-1 py-3 rounded-lg ${activeTab === "history" ? "bg-[#FF9933] text-white" : "text-[#000080] hover:text-[#000080]/80"}`}
-            >
-              <HistoryIcon className="mr-2 h-5 w-5" />
-              Attendance History
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="today" className="animate-fade-in">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="w-full md:w-1/3">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-[#000080] flex items-center">
-                  <Calendar className="mr-3 h-6 w-6 text-[#138808]" />
-                  Mark Attendance - Today
-                </CardTitle>
-                <CardDescription className="text-base text-[#000080]/70">
-                  Toggle the switch to mark students as present or absent
-                </CardDescription>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-[#000080] text-xl">Attendance Details</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {studentsStatus.map((student) => (
-                    <div 
-                      key={student.id} 
-                      className={`flex items-center justify-between p-4 border-2 rounded-xl 
-                        ${student.present 
-                          ? 'border-[#138808] bg-[#138808]/5' 
-                          : 'border-red-400 bg-red-50'
-                        } transition-colors duration-200`}
-                    >
-                      <div>
-                        <div className="flex items-center">
-                          {student.present 
-                            ? <CheckCircle className="h-5 w-5 mr-2 text-[#138808]" /> 
-                            : <XCircle className="h-5 w-5 mr-2 text-red-500" />
-                          }
-                          <p className="font-semibold text-lg text-[#000080]">{student.name}</p>
-                        </div>
-                        <p className="text-sm text-[#000080]/70 mt-1">ID: {student.id}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className={`text-sm font-medium ${student.present ? 'text-[#138808]' : 'text-red-500'}`}>
-                          {student.present ? 'Present' : 'Absent'}
-                        </span>
-                        <Switch 
-                          checked={student.present}
-                          onCheckedChange={() => handleToggleAttendance(student.id)}
-                          className="data-[state=checked]:bg-[#138808]"
-                        />
-                      </div>
-                    </div>
-                  ))}
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal border-[#138808]/30",
+                          !selectedDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {selectedDate ? format(selectedDate, 'PPP') : <span>Select date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(date) => setSelectedDate(date as Date)}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 
-                <Button 
-                  variant="tricolor"
-                  size="lg"
-                  className="mt-8 w-full"
-                  onClick={handleSubmit}
-                >
-                  Submit Attendance
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="history" className="animate-fade-in">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-[#000080] flex items-center">
-                  <HistoryIcon className="mr-3 h-6 w-6 text-[#138808]" />
-                  Attendance History
-                </CardTitle>
-                <CardDescription className="text-base text-[#000080]/70">
-                  View past attendance records for all students
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {attendanceHistory.map((day, index) => (
-                  <div key={index} className="mb-8">
-                    <h3 className="text-xl font-semibold mb-4 bg-[#FF9933]/10 text-[#FF9933] px-4 py-2 rounded-lg inline-block">
-                      <Calendar className="inline-block mr-2 h-5 w-5" />
-                      {day.date}
-                    </h3>
-                    <div className="space-y-3">
-                      {day.entries.map((entry) => (
-                        <div 
-                          key={entry.id} 
-                          className={`flex items-center justify-between p-4 border-l-4 rounded-xl shadow-sm
-                            ${entry.status === 'present' 
-                              ? 'border-l-[#138808] bg-[#138808]/5' 
-                              : 'border-l-red-500 bg-red-50'
-                            }`}
-                        >
-                          <div>
-                            <div className="flex items-center">
-                              {entry.status === 'present' 
-                                ? <CheckCircle className="h-5 w-5 mr-2 text-[#138808]" /> 
-                                : <XCircle className="h-5 w-5 mr-2 text-red-500" />
-                              }
-                              <p className="font-medium text-lg text-[#000080]">{entry.student_name}</p>
-                            </div>
-                            <p className="text-sm text-[#000080]/70 mt-1">ID: {entry.student_id}</p>
-                          </div>
-                          <div>
-                            <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                              entry.status === 'present' 
-                                ? 'bg-[#138808]/20 text-[#138808]' 
-                                : 'bg-red-100 text-red-500'
-                            }`}>
-                              {entry.status === 'present' ? 'Present' : 'Absent'}
-                            </span>
-                          </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Class</label>
+                  <Select value={selectedClass} onValueChange={handleClassChange}>
+                    <SelectTrigger className="w-full border-[#138808]/30">
+                      <SelectValue placeholder="Select a class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {classesLoading ? (
+                        <div className="px-2 py-4 text-center">
+                          <div className="h-5 w-5 mx-auto border-2 border-t-[#138808] border-[#138808]/20 rounded-full animate-spin"></div>
                         </div>
-                      ))}
-                    </div>
+                      ) : (
+                        classData?.map(cls => (
+                          <SelectItem key={cls.id} value={cls.id}>
+                            {cls.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="pt-4">
+                  <h3 className="font-medium mb-2">Quick Actions</h3>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start border-[#138808]/30 text-[#000080]"
+                      onClick={() => {
+                        toast({
+                          title: "Attendance reports",
+                          description: "Attendance reports feature is coming soon."
+                        });
+                      }}
+                    >
+                      <Filter className="h-4 w-4 mr-2" />
+                      View Attendance Reports
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start border-[#138808]/30 text-[#000080]"
+                      onClick={() => {
+                        toast({
+                          title: "Previous records",
+                          description: "Previous attendance records feature is coming soon."
+                        });
+                      }}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      Previous Attendance Records
+                    </Button>
                   </div>
-                ))}
+                </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div>
+          
+          <div className="w-full md:w-2/3">
+            {!selectedClass ? (
+              <Card className="h-full flex items-center justify-center">
+                <CardContent className="text-center py-12">
+                  <div className="text-[#000080]/60 mb-2">
+                    <Clock className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <h3 className="text-lg font-medium">Select a Class</h3>
+                    <p className="text-sm max-w-md mx-auto mt-2">
+                      Choose a class from the dropdown to view and mark attendance for students
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : studentsLoading ? (
+              <div className="h-full flex items-center justify-center p-12">
+                <div className="h-8 w-8 border-4 border-t-[#138808] border-[#138808]/20 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <AttendanceGrid 
+                students={studentsData || []}
+                date={selectedDate}
+                className={classData?.find(c => c.id === selectedClass)?.name || ''}
+                onSave={handleSaveAttendance}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );
 };
 
-export default Attendance;
+export default TeacherAttendance;
