@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +27,10 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import FinancialOverview from "./pages/admin/FinancialOverview";
 import AdminLayout from "./components/layouts/AdminLayout";
 import NotFound from "./pages/NotFound";
+import TeacherAttendancePage from "./pages/teacher/AttendancePage";
+import TeacherDiaryManagement from "./pages/teacher/DiaryManagement";
+import TeacherGradeManagement from "./pages/teacher/GradeManagement";
+import TeacherAssessments from "./pages/teacher/Assessments";
 
 const queryClient = new QueryClient();
 
@@ -205,6 +208,40 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <PTM />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Teacher Routes */}
+      <Route
+        path="/teacher/attendance"
+        element={
+          <ProtectedRoute>
+            <TeacherAttendancePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/diary"
+        element={
+          <ProtectedRoute>
+            <TeacherDiaryManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/grades"
+        element={
+          <ProtectedRoute>
+            <TeacherGradeManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/assessments"
+        element={
+          <ProtectedRoute>
+            <TeacherAssessments />
           </ProtectedRoute>
         }
       />
