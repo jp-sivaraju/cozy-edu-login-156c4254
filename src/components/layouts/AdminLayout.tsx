@@ -1,16 +1,17 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { Button } from "@/components/ui/button";
 import { 
   Home, Settings, LogOut, User, FileBarChart, GraduationCap, DollarSign, 
   Bell, Award, Bus, Users, MessageSquare, Library, Box, 
   Clock, Globe, BookOpen, Database, BarChart2, Layers, UserCheck,
-  FileSpreadsheet, Calendar, FileText, Book, Navigation, LifeBuoy,
-  Receipt, BadgePercent, FileCheck, Ticket
+  FileSpreadsheet, Calendar, FileText, LifeBuoy, Menu, ChevronDown, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -34,20 +35,26 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Function to check if a path is active
   const isActive = (path: string) => {
-    return location.pathname === path;
+    if (path === '/admin' && location.pathname === '/admin') {
+      return true;
+    }
+    return path !== '/admin' && location.pathname.includes(path);
   };
 
   // Admin navigation items with expanded submenus
   const navItems: NavigationItem[] = [
-    { path: '/admin', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
+    { path: '/admin', label: 'Dashboard', icon: <Home className="h-5 w-5" /> },
     { 
       path: '/admin/users', 
       label: 'User Management', 
-      icon: <Users className="h-5 w-5 text-[#138808]" />,
+      icon: <Users className="h-5 w-5" />,
       submenu: [
         { path: '/admin/users', label: 'Manage Users' },
         { path: '/admin/staff', label: 'Staff Management' },
@@ -57,7 +64,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/curriculum-generation', 
       label: 'Academics', 
-      icon: <GraduationCap className="h-5 w-5 text-[#138808]" />,
+      icon: <GraduationCap className="h-5 w-5" />,
       submenu: [
         { path: '/admin/curriculum-generation', label: 'Curriculum Generation' },
         { path: '/admin/exams/schedule', label: 'Exam Schedules' },
@@ -68,7 +75,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/routes', 
       label: 'Transport', 
-      icon: <Bus className="h-5 w-5 text-[#138808]" />,
+      icon: <Bus className="h-5 w-5" />,
       submenu: [
         { path: '/admin/routes', label: 'Route Definition' },
         { path: '/admin/transport/assign', label: 'Assign Transport' },
@@ -78,7 +85,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/financial', 
       label: 'Finance', 
-      icon: <DollarSign className="h-5 w-5 text-[#138808]" />,
+      icon: <DollarSign className="h-5 w-5" />,
       submenu: [
         { path: '/admin/financial', label: 'Financial Overview' },
         { path: '/admin/fees', label: 'Fee Management' },
@@ -89,7 +96,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/hall-tickets', 
       label: 'Examinations', 
-      icon: <Award className="h-5 w-5 text-[#138808]" />,
+      icon: <Award className="h-5 w-5" />,
       submenu: [
         { path: '/admin/hall-tickets', label: 'Hall Tickets' },
         { path: '/admin/hall-tickets/bulk-approve', label: 'Bulk Approvals' },
@@ -98,7 +105,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/notifications', 
       label: 'Communications', 
-      icon: <Bell className="h-5 w-5 text-[#138808]" />,
+      icon: <Bell className="h-5 w-5" />,
       submenu: [
         { path: '/admin/notifications', label: 'Notifications' },
         { path: '/admin/messages', label: 'Messages/Circulars' },
@@ -107,224 +114,272 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { 
       path: '/admin/reports', 
       label: 'Reports', 
-      icon: <FileBarChart className="h-5 w-5 text-[#138808]" />,
+      icon: <FileBarChart className="h-5 w-5" />,
       submenu: [
         { path: '/admin/reports', label: 'System Reports' },
         { path: '/admin/analytics', label: 'Analytics' },
       ]
     },
-    { path: '/admin/settings', label: 'Settings', icon: <Settings className="h-5 w-5 text-[#138808]" /> },
-    { 
-      path: '/admin/library', 
-      label: 'Library Management', 
-      icon: <Library className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/library', label: 'Library Management' },
-      ]
-    },
-    { 
-      path: '/admin/inventory', 
-      label: 'Inventory Management', 
-      icon: <Box className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/inventory', label: 'Track Inventory' },
-      ]
-    },
-    { 
-      path: '/admin/homework', 
-      label: 'Homework Management', 
-      icon: <Book className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/homework', label: 'Homework Assignments' },
-      ]
-    },
-    { 
-      path: '/admin/payroll', 
-      label: 'HR/Payroll', 
-      icon: <Clock className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/payroll', label: 'Manage Payroll' },
-      ]
-    },
-    { 
-      path: '/admin/website', 
-      label: 'School Website', 
-      icon: <Globe className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/website', label: 'Website Content' },
-      ]
-    },
-    { 
-      path: '/admin/academic-reports', 
-      label: 'Academic Reports', 
-      icon: <FileBarChart className="h-5 w-5 text-[#138808]" />,
-      submenu: [
-        { path: '/admin/academic-reports', label: 'Performance Reports' },
-      ]
-    },
+    { path: '/admin/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
   ];
-
-  // Render submenu items for navigation
-  const renderSubmenu = (submenuItems: SubmenuItem[]) => {
-    return (
-      <ul className="w-full md:w-[250px] grid p-2 md:grid-cols-1 bg-white shadow-lg rounded-lg border border-[#138808]/20">
-        {submenuItems.map((item, idx) => (
-          <li key={idx}>
-            <Link to={item.path}>
-              <Button 
-                variant="ghost" 
-                className={`w-full justify-start text-left ${
-                  isActive(item.path) 
-                    ? 'bg-[#138808]/15 text-[#000080] font-semibold' 
-                    : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
-                }`}
-              >
-                <div>
-                  <span className="block font-medium text-base">{item.label}</span>
-                </div>
-              </Button>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    );
-  };
 
   // Function to handle submenu toggle
   const handleSubmenuToggle = (path: string) => {
     setOpenSubmenu(prevPath => prevPath === path ? null : path);
   };
 
+  // Mark the Finance section as active when on /admin/financial
+  useEffect(() => {
+    if (location.pathname.includes('/admin/financial')) {
+      setOpenSubmenu('/admin/financial');
+    }
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex">
-      {/* Side navigation */}
-      <aside className="w-16 md:w-64 bg-white border-r border-[#138808]/20 shrink-0 shadow-md h-screen sticky top-0">
-        <div className="p-4 border-b border-[#138808]/20">
-          <Link to="/admin" className="flex items-center justify-center md:justify-start">
-            <span className="font-bold text-xl text-[#FF9933] hidden md:inline">EduSense Admin</span>
-            <span className="font-bold text-xl text-[#FF9933] md:hidden">EA</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
+      {/* Mobile menu button - only visible on small screens */}
+      <button 
+        className="fixed top-4 right-4 z-50 md:hidden bg-white p-2 rounded-full shadow-lg border border-slate-200"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      >
+        <Menu className="h-6 w-6 text-slate-700" />
+      </button>
+
+      {/* Side navigation - collapsible */}
+      <aside 
+        className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
+                  ${sidebarCollapsed ? 'w-20' : 'w-64'} 
+                  fixed md:relative bg-gradient-to-b from-blue-900 to-indigo-900 border-r border-blue-800/20 
+                  shadow-xl h-screen transition-all duration-300 z-40`}
+      >
+        {/* Logo area */}
+        <div className="p-4 border-b border-blue-800/30 flex items-center justify-between">
+          <Link to="/admin" className="flex items-center">
+            {!sidebarCollapsed && (
+              <span className="font-bold text-xl bg-gradient-to-r from-blue-100 to-white bg-clip-text text-transparent">
+                EduSense ERP
+              </span>
+            )}
+            {sidebarCollapsed && (
+              <span className="font-bold text-xl text-white">ES</span>
+            )}
           </Link>
+          <button 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)} 
+            className="text-blue-300 hover:text-white transition-colors hidden md:block"
+          >
+            <ChevronRight className={`h-5 w-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} />
+          </button>
         </div>
         
-        <nav className="py-6 md:py-8 px-2 md:px-5 flex flex-col h-[calc(100vh-5rem)] overflow-auto">
-          <ul className="space-y-2 flex-1">
+        {/* Navigation */}
+        <nav className="py-6 px-3 flex flex-col h-[calc(100vh-5rem)] overflow-auto scrollbar-thin scrollbar-thumb-blue-800/30 scrollbar-track-transparent">
+          <div className="flex-1 space-y-1">
             {navItems.map((item, index) => (
-              <li key={index} className="relative">
+              <div key={index} className="relative">
                 {item.submenu ? (
-                  <div className="mb-1">
-                    <NavigationMenu orientation="vertical" className="w-full">
-                      <NavigationMenuList className="flex-col items-start w-full">
-                        <NavigationMenuItem className="w-full">
-                          <NavigationMenuTrigger 
-                            className={`w-full justify-start rounded-xl py-2.5 text-left ${
-                              location.pathname.includes(item.path) && item.path !== '/admin' 
-                                ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
-                                : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
-                            }`}
-                            onClick={() => handleSubmenuToggle(item.path)}
-                          >
-                            <span className="flex items-center">
-                              {item.icon}
-                              <span className="hidden md:inline ml-3 text-base">{item.label}</span>
-                            </span>
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent 
-                            className="absolute left-full top-0 min-w-[200px] md:min-w-[250px] z-50 bg-white rounded-lg shadow-lg border border-[#138808]/20"
-                          >
-                            {renderSubmenu(item.submenu)}
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
-                      </NavigationMenuList>
-                    </NavigationMenu>
-                  </div>
-                ) : (
-                  <Link to={item.path}>
-                    <Button 
-                      variant="ghost" 
-                      className={`w-full justify-start rounded-xl py-2.5 ${
-                        isActive(item.path) 
-                          ? 'bg-[#138808]/15 text-[#000080] font-semibold border-l-4 border-[#FF9933]' 
-                          : 'text-slate-700 hover:bg-[#138808]/5 hover:text-[#000080]'
-                      }`}
+                  <>
+                    <button
+                      onClick={() => handleSubmenuToggle(item.path)}
+                      className={`w-full flex items-center justify-between p-3 rounded-lg mb-1 transition-all duration-200
+                        ${isActive(item.path) || openSubmenu === item.path 
+                          ? 'bg-blue-800/60 text-white' 
+                          : 'text-blue-100 hover:bg-blue-800/40'
+                        }
+                        ${sidebarCollapsed ? 'px-2 justify-center' : 'px-3 justify-between'}`
+                      }
                     >
-                      <span className="flex items-center">
-                        {item.icon}
-                        <span className="hidden md:inline ml-3 text-base">{item.label}</span>
-                      </span>
-                    </Button>
+                      <div className="flex items-center">
+                        <TooltipProvider delayDuration={300}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className={`${!sidebarCollapsed && 'mr-3'} text-blue-100 ${isActive(item.path) || openSubmenu === item.path ? 'text-white' : ''}`}>
+                                {item.icon}
+                              </span>
+                            </TooltipTrigger>
+                            {sidebarCollapsed && (
+                              <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                                {item.label}
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        {!sidebarCollapsed && (
+                          <span className="text-sm font-medium">{item.label}</span>
+                        )}
+                      </div>
+                      {!sidebarCollapsed && (
+                        <ChevronDown 
+                          className={`h-4 w-4 transition-transform duration-200 ${openSubmenu === item.path ? 'rotate-180' : ''}`} 
+                        />
+                      )}
+                    </button>
+                    
+                    {/* Submenu */}
+                    {openSubmenu === item.path && !sidebarCollapsed && (
+                      <div className="ml-6 pl-3 border-l border-blue-700 space-y-1 animate-in slide-in-from-left-1 duration-200 py-1">
+                        {item.submenu.map((subItem, idx) => (
+                          <Link 
+                            key={idx} 
+                            to={subItem.path}
+                            className={`block py-2 px-3 rounded-md text-sm ${
+                              location.pathname === subItem.path 
+                                ? 'bg-blue-700/60 text-white font-medium' 
+                                : 'text-blue-200 hover:bg-blue-800/30 hover:text-white'
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Collapsed sidebar tooltips for submenu */}
+                    {sidebarCollapsed && openSubmenu === item.path && (
+                      <div className="absolute left-full top-0 ml-2 bg-blue-900 border border-blue-700 rounded-lg shadow-xl p-2 animate-in slide-in-from-left-1 z-50 min-w-[200px]">
+                        <div className="py-1 font-medium text-white px-3">{item.label}</div>
+                        <div className="border-t border-blue-800 mt-1 pt-1">
+                          {item.submenu.map((subItem, idx) => (
+                            <Link 
+                              key={idx} 
+                              to={subItem.path}
+                              className={`block py-2 px-3 rounded-md text-sm ${
+                                location.pathname === subItem.path 
+                                  ? 'bg-blue-700/60 text-white font-medium' 
+                                  : 'text-blue-200 hover:bg-blue-800/40 hover:text-white'
+                              }`}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link 
+                    to={item.path}
+                    className={`flex items-center p-3 rounded-lg mb-1 transition-colors
+                      ${isActive(item.path) 
+                        ? 'bg-blue-800/60 text-white' 
+                        : 'text-blue-100 hover:bg-blue-800/40'
+                      }
+                      ${sidebarCollapsed ? 'justify-center px-2' : 'px-3'}`
+                    }
+                  >
+                    <TooltipProvider delayDuration={300}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className={`${!sidebarCollapsed && 'mr-3'} text-blue-100 ${isActive(item.path) ? 'text-white' : ''}`}>
+                            {item.icon}
+                          </span>
+                        </TooltipTrigger>
+                        {sidebarCollapsed && (
+                          <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                            {item.label}
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
+                    
+                    {!sidebarCollapsed && (
+                      <span className="text-sm font-medium">{item.label}</span>
+                    )}
                   </Link>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
           
-          <div className="pt-4 border-t border-[#138808]/20">
-            <div className="relative">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem className="w-full">
-                    <NavigationMenuTrigger 
-                      className="w-full justify-start rounded-xl py-2 text-left bg-transparent hover:bg-[#138808]/5"
-                    >
-                      <span className="flex items-center">
-                        <User className="h-5 w-5 text-[#FF9933]" />
-                        <span className="hidden md:inline ml-3 text-base text-slate-700">{user?.name || 'Admin'}</span>
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="absolute bottom-full left-0 md:left-auto md:bottom-auto md:right-0 md:top-full min-w-[200px] md:min-w-[280px] z-50 bg-white rounded-lg shadow-lg border border-[#138808]/20">
-                      <div className="p-4">
-                        <div className="mb-4 pb-4 border-b border-[#138808]/20">
-                          <p className="text-xl font-bold text-[#000080]">{user?.name}</p>
-                          <p className="text-base text-slate-600">{user?.email}</p>
-                          <div className="mt-3 inline-flex items-center px-4 py-2 bg-[#138808]/10 rounded-full">
-                            <span className="text-sm font-semibold text-[#138808] capitalize">{user?.role}</span>
-                          </div>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start text-[#000080] rounded-xl border-[#138808]/30 hover:bg-[#138808]/5 hover:text-[#000080] text-base font-medium"
-                          onClick={logout}
-                        >
-                          <LogOut className="mr-3 h-5 w-5 text-[#FF9933]" /> Sign out
-                        </Button>
+          {/* User profile and logout */}
+          <div className="pt-4 border-t border-blue-800/30 mt-4">
+            <div 
+              className={`p-3 rounded-lg transition-colors text-blue-100 hover:bg-blue-800/40 mb-2 ${sidebarCollapsed ? 'justify-center' : ''}`}
+            >
+              {!sidebarCollapsed ? (
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm mr-2">
+                    {user?.name?.charAt(0) || 'A'}
+                  </div>
+                  <div className="overflow-hidden">
+                    <div className="text-sm font-medium truncate">{user?.name || 'Admin'}</div>
+                    <div className="text-xs text-blue-300 truncate">{user?.email || 'admin@edusense.com'}</div>
+                  </div>
+                </div>
+              ) : (
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="w-8 h-8 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+                        {user?.name?.charAt(0) || 'A'}
                       </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="bg-blue-900 text-white border-blue-700">
+                      <p>{user?.name || 'Admin'}</p>
+                      <p className="text-xs text-blue-300">{user?.email || 'admin@edusense.com'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
+            
+            <Button 
+              variant="ghost" 
+              className={`w-full flex items-center space-x-2 text-blue-100 hover:bg-blue-800/40 hover:text-white
+                ${sidebarCollapsed ? 'justify-center px-2' : 'justify-start px-3'}`}
+              onClick={() => {
+                logout();
+                toast({
+                  title: "Logged out successfully",
+                  description: "You have been logged out of the system",
+                  duration: 3000,
+                });
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              {!sidebarCollapsed && <span>Sign out</span>}
+            </Button>
           </div>
         </nav>
       </aside>
       
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <header className="bg-[#FF9933] shadow-md">
-          <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+        <header className="bg-gradient-to-r from-indigo-600 to-blue-700 shadow-md sticky top-0 z-30">
+          <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
-              <p className="text-white/80 text-sm">Welcome back, {user?.name || 'Admin'}</p>
+              <p className="text-blue-100 text-sm">Welcome back, {user?.name || 'Admin'}</p>
             </div>
             <Button
-              variant="ghost"
-              className="text-white hover:bg-white/20 rounded-xl border border-white/30"
+              variant="outline"
+              className="bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm"
               onClick={() => navigate('/dashboard')}
             >
-              Back to Main Dashboard
+              Main Dashboard
             </Button>
           </div>
         </header>
         
-        <div className="container mx-auto px-6 py-8">
+        <div className="p-6">
           {children}
         </div>
         
-        <footer className="bg-white border-t border-[#138808]/10 py-4">
-          <div className="container mx-auto px-6 text-center text-[#000080]/60 text-sm">
-            &copy; {new Date().getFullYear()} EduSense Admin Portal. All rights reserved.
+        <footer className="bg-white shadow-inner border-t border-slate-200 py-4 mt-auto">
+          <div className="container mx-auto px-6 text-center text-slate-600 text-sm">
+            &copy; {new Date().getFullYear()} EduSense ERP - Premium School Management System
           </div>
         </footer>
       </main>
+      
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
+      )}
     </div>
   );
 };
