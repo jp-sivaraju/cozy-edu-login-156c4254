@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, Clock, Filter, Plus, Search, Check, X, File, FileText } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Filter, Plus, Search, Check, X, File, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 

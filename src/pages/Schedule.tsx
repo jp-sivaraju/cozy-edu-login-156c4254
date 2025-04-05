@@ -33,7 +33,7 @@ const WEEKLY_SCHEDULE = [
 ];
 
 // Mock calendar events
-const CALENDAR_EVENTS = {
+const CALENDAR_EVENTS: Record<string, CalendarEvent[]> = {
   "2025-04-04": [
     { id: 1, name: "Mathematics Test", time: "09:00 - 10:00", teacher: "Mrs. Sharma" },
     { id: 2, name: "Science Project Due", time: "14:00", teacher: "Mr. Patel" }
@@ -42,10 +42,10 @@ const CALENDAR_EVENTS = {
     { id: 3, name: "Field Trip", time: "09:00 - 15:00", teacher: "Mr. Kumar" }
   ],
   "2025-04-08": [
-    { id: 4, name: "Parent-Teacher Meeting", time: "16:00 - 18:00" }
+    { id: 4, name: "Parent-Teacher Meeting", time: "16:00 - 18:00", teacher: "" }
   ],
   "2025-04-15": [
-    { id: 5, name: "Annual Sports Day", time: "09:00 - 16:00" }
+    { id: 5, name: "Annual Sports Day", time: "09:00 - 16:00", teacher: "" }
   ]
 };
 
@@ -54,7 +54,7 @@ interface CalendarEvent {
   id: number;
   name: string;
   time: string;
-  teacher?: string;
+  teacher: string;
 }
 
 const Schedule = () => {
