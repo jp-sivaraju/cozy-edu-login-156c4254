@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -20,7 +21,15 @@ interface AuthContextType {
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Export the AuthContext
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isLoading: false,
+  login: async () => {},
+  logout: () => {},
+  forgotPassword: async () => {},
+  resetPassword: async () => {},
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
