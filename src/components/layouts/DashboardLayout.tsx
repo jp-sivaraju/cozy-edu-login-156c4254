@@ -15,6 +15,20 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+// Define the type for submenu items
+interface SubmenuItem {
+  path: string;
+  label: string;
+}
+
+// Define the type for navigation items that may have submenus
+interface NavigationItem {
+  path: string;
+  label: string;
+  icon: React.ReactNode;
+  submenu?: SubmenuItem[];
+}
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
@@ -40,8 +54,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   // Role-based navigation items
-  const getNavigationItems = () => {
-    const commonItems = [
+  const getNavigationItems = (): NavigationItem[] => {
+    const commonItems: NavigationItem[] = [
       { path: '/dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5 text-[#138808]" /> },
       { path: '/schedule', label: 'Schedule', icon: <Calendar className="h-5 w-5 text-[#138808]" /> },
       { path: '/diary', label: 'Diary', icon: <Book className="h-5 w-5 text-[#138808]" /> },
@@ -86,7 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navItems = getNavigationItems();
 
   // Render submenu items for admin navigation
-  const renderSubmenu = (submenuItems: any[]) => {
+  const renderSubmenu = (submenuItems: SubmenuItem[]) => {
     return (
       <ul className="w-full md:w-[250px] grid p-2 md:grid-cols-1 bg-white shadow-lg rounded-lg border border-[#138808]/20">
         {submenuItems.map((item, idx) => (
